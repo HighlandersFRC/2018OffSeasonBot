@@ -58,6 +58,7 @@ public class ArcadeDrive extends Command {
     	leftPower = (-turn);
     	rightPower= (turn);
     }
+
     if(Math.abs(leftPower)>1) {
       leftPower = (leftPower/Math.abs(leftPower));
       rightPower = Math.abs(rightPower/leftPower)*(rightPower/Math.abs(rightPower));
@@ -66,6 +67,7 @@ public class ArcadeDrive extends Command {
       rightPower = (rightPower/Math.abs(rightPower));
       leftPower = Math.abs(leftPower/rightPower)*(leftPower/Math.abs(leftPower));
     }
+    
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, leftPower);
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
     
@@ -77,6 +79,7 @@ public class ArcadeDrive extends Command {
   		RobotMap.shifters.set(RobotMap.lowGear);
   	}
   	if(RobotMap.shifters.get() == RobotMap.highGear) {
+      
   		for(TalonSRX talon:RobotMap.driveMotors) {
   	    	talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
   	    	talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
@@ -88,7 +91,7 @@ public class ArcadeDrive extends Command {
   	}
   	else if(RobotMap.shifters.get() == RobotMap.lowGear) {
   		for(TalonSRX talon:RobotMap.driveMotors) {	
-  			talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
+  			  talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
   	    	talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, 0);  
   	    	talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, 0);
   	    	talon.enableCurrentLimit(true);

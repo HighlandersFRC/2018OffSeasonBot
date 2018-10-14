@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.teleopcommands.TeleopSuite;
 
 
 /**
@@ -24,7 +25,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
   public static OI m_oi;
-
+  private TeleopSuite teleopS;
+  private RobotConfig config;
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -35,6 +37,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_oi = new OI();
+    config = new RobotConfig();
    // m_chooser.addDefault("Default Auto", new ExampleCommand());
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -79,6 +82,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    config.autoConfig();
     m_autonomousCommand = m_chooser.getSelected();
 
     /*
@@ -104,6 +108,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    teleopS = new TeleopSuite();
+    teleopS.startTeleopCommands();
+    config.teleopConfig();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

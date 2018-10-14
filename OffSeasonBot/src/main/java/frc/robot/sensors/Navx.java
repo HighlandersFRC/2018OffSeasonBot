@@ -6,14 +6,21 @@ import com.kauailabs.navx.frc.AHRS;
 public class Navx {
 	private double NavxAngle = 0;
 	private double originalAngle;
+	private double originalYaw;
 	private AHRS imu;
 
-	public Navx(double angle, AHRS navx) {
+	public Navx( AHRS navx) {
 		imu = navx;
-		originalAngle = angle;
+		originalAngle = navx.getAngle();
+		originalYaw = navx.getYaw();
+
 	}
 	public double currentAngle() {
-		return originalAngle -imu.getAngle();	
+		return imu.getAngle()-originalAngle;	
+	}
+	public double currentYaw(){
+		return imu.getYaw()-originalYaw;
+		
 	}
 	public boolean isMoving() {
 		return imu.isMoving();
@@ -30,11 +37,11 @@ public class Navx {
 	public boolean isInerference(){
 		return imu.isMagneticDisturbance();
 	}
-	public void softReset(double angle){
+	public void softResetAngle(double angle){
 		originalAngle = angle;
 
 	}
-	
-	
-
+	public void softResetYaw(double yaw){
+		originalYaw = yaw;
+	}
 }
