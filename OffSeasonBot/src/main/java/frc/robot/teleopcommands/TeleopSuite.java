@@ -9,8 +9,8 @@ public class TeleopSuite {
 		
 	}
 	public void startTeleopCommands() {
-		driveControl.start();
-		//arcadeDrive.start();
+		//driveControl.start();
+		arcadeDrive.start();
 	}
 
 }

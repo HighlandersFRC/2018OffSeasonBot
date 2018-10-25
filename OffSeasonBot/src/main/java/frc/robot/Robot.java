@@ -13,7 +13,10 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomouscommands.AutoSuite;
+import frc.robot.autonomouscommands.PathSetup;
 import frc.robot.teleopcommands.TeleopSuite;
+import frc.robot.universalcommands.SmartDashboardPutterOnner;
 
 
 /**
@@ -26,7 +29,10 @@ import frc.robot.teleopcommands.TeleopSuite;
 public class Robot extends TimedRobot {
   public static OI m_oi;
   private TeleopSuite teleopS;
+  private AutoSuite autoS;
   private RobotConfig config;
+  private SmartDashboardPutterOnner smart;
+  private PathSetup pathSetup;
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -38,6 +44,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();
     config = new RobotConfig();
+    pathSetup = new PathSetup();
+		pathSetup.generateMainPath();
+		RobotConfig.leftAutoPath = pathSetup.generateLeftPathFollower();
+		RobotConfig.rightAutoPath = pathSetup.generateRightPathFollower();
+    //smart.start();
    // m_chooser.addDefault("Default Auto", new ExampleCommand());
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -62,10 +73,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    RobotConfig.leftAutoPath = pathSetup.generateLeftPathFollower();
+		RobotConfig.rightAutoPath = pathSetup.generateRightPathFollower();
+
   }
 
   @Override
   public void disabledPeriodic() {
+    SmartDashboard.putNumber("distancer", RobotMap.rightMainDrive.getDistance());
+    SmartDashboard.putNumber("distancel", RobotMap.leftMainDrive.getDistance());
+    SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
 
@@ -82,7 +99,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    autoS = new AutoSuite();
+    autoS.startAutoCommands();
+
     config.autoConfig();
+    
     m_autonomousCommand = m_chooser.getSelected();
 
     /*
@@ -103,6 +124,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    SmartDashboard.putNumber("VelocityR", RobotMap.rightMainDrive.getVelocity());
+    SmartDashboard.putNumber("VelocityL", RobotMap.leftMainDrive.getVelocity());
+    SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
 
@@ -125,6 +149,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("distancer", RobotMap.rightMainDrive.getDistance());
+    SmartDashboard.putNumber("distancel", RobotMap.leftMainDrive.getDistance());
+    SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
 

@@ -58,7 +58,7 @@ public class ArcadeDrive extends Command {
     	leftPower = (-turn);
     	rightPower= (turn);
     }
-
+    //Keeps left and right power between -1 and 1 and scales other value to match
     if(Math.abs(leftPower)>1) {
       leftPower = (leftPower/Math.abs(leftPower));
       rightPower = Math.abs(rightPower/leftPower)*(rightPower/Math.abs(rightPower));

@@ -52,7 +52,7 @@ public class RobotMap {
 		public static DoubleSolenoid.Value highGear = DoubleSolenoid.Value.kForward;
 		
 		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
-		public static DriveEncoder rightMaindrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
+		public static DriveEncoder rightMainDrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
 		public static Navx mainNavx = new Navx(navx);	
         	
 		//Array of drive motors to simplify configuration

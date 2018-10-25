@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import jaci.pathfinder.followers.DistanceFollower;
+
 public class RobotConfig {
 	public static double gearRatio = 7.5;
     public static double encoderTicsPerShaftRotation = 4096;
@@ -19,6 +21,10 @@ public class RobotConfig {
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
 	public static int driveMotorPeakCurrentDurationHighGear = 0;		//Amps
 	public static double driverDeadZone = 0.15;
+	public static DistanceFollower leftAutoPath;
+	public static DistanceFollower rightAutoPath;
+	public static double maxVelocity = 11.9;
+	public static double maxAcceleration = 9;
 	public static int timeOut = 4;//Milliseconds
 	public RobotConfig() {
 		setStartingConfig();
