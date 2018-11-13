@@ -27,6 +27,7 @@ public class DriveEncoder {
 	public void softReset(){
 		startingValue = masterTalon.getSelectedSensorPosition(0);
 	}
+
 	
 	
 

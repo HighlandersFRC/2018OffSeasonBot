@@ -18,6 +18,7 @@ import frc.robot.RobotMap;
 public class TankDrive extends Command {
   private double deadZone = 0.1;
   public TankDrive() {
+    requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -43,10 +44,10 @@ public class TankDrive extends Command {
       RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
     }	
   if(OI.shiftUp.get()) {
-    RobotMap.shifters.set(RobotMap.highGear);
+    RobotMap.drive.setHighGear();
   }
   else if(OI.shiftDown.get()) {
-    RobotMap.shifters.set(RobotMap.lowGear);
+    RobotMap.drive.setLowGear();
   }
   if(RobotMap.shifters.get() == RobotMap.highGear) {
     for(TalonSRX talon:RobotMap.driveMotors) {

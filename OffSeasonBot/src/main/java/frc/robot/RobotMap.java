@@ -13,7 +13,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
-
+import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
 import frc.robot.subsystems.DriveBase;
@@ -65,6 +65,8 @@ public class RobotMap {
        			RobotMap.rightDriveFollowerTwo
         };
 		public static DriveBase drive = new DriveBase();
+
+		public static PathList universalPathlist = new PathList();
 	
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.

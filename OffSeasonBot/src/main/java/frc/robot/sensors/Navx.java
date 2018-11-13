@@ -13,28 +13,31 @@ public class Navx {
 		imu = navx;
 		originalAngle = navx.getAngle();
 		originalYaw = navx.getYaw();
-
 	}
 	public double currentAngle() {
 		return imu.getAngle()-originalAngle;	
 	}
 	public double currentYaw(){
-		return imu.getYaw()-originalYaw;
-		
+		return ((imu.getYaw())-originalYaw);
+	}
+	public double currentReverseYaw(){
+		return ((-imu.getYaw())-originalYaw);
 	}
 	public boolean isMoving() {
+	
 		return imu.isMoving();
 	}
+
 	public boolean isOn(){
 		return imu.isConnected();
 	}
-	public boolean isCalibrated(){
+	public boolean isMagCalibrated(){
 		return imu.isMagnetometerCalibrated();
 	}
 	public boolean isAutoCalibrating(){
 		return imu.isCalibrating();
 	}
-	public boolean isInerference(){
+	public boolean isMagInerference(){
 		return imu.isMagneticDisturbance();
 	}
 	public void softResetAngle(double angle){

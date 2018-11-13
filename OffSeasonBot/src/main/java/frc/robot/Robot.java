@@ -9,14 +9,17 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
+import frc.robot.autonomouscommands.PathList;
 import frc.robot.autonomouscommands.PathSetup;
+import frc.robot.sensors.Navx;
 import frc.robot.teleopcommands.TeleopSuite;
-import frc.robot.universalcommands.SmartDashboardPutterOnner;
 
 
 /**
@@ -31,8 +34,8 @@ public class Robot extends TimedRobot {
   private TeleopSuite teleopS;
   private AutoSuite autoS;
   private RobotConfig config;
-  private SmartDashboardPutterOnner smart;
   private PathSetup pathSetup;
+  private Navx testNavx;
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -44,10 +47,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();
     config = new RobotConfig();
-    pathSetup = new PathSetup();
-		pathSetup.generateMainPath();
-		RobotConfig.leftAutoPath = pathSetup.generateLeftPathFollower();
-		RobotConfig.rightAutoPath = pathSetup.generateRightPathFollower();
+    
     //smart.start();
    // m_chooser.addDefault("Default Auto", new ExampleCommand());
     // chooser.addObject("My Auto", new MyAutoCommand());
@@ -73,15 +73,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    RobotConfig.leftAutoPath = pathSetup.generateLeftPathFollower();
-		RobotConfig.rightAutoPath = pathSetup.generateRightPathFollower();
+    testNavx = new Navx(RobotMap.navx);
+    testNavx.softResetYaw(RobotMap.navx.getYaw()-180);
+    RobotMap.universalPathlist.resetAllPaths();
 
   }
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putNumber("distancer", RobotMap.rightMainDrive.getDistance());
-    SmartDashboard.putNumber("distancel", RobotMap.leftMainDrive.getDistance());
+    SmartDashboard.putNumber("navxValue", testNavx.currentYaw());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
@@ -124,6 +124,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+
     SmartDashboard.putNumber("VelocityR", RobotMap.rightMainDrive.getVelocity());
     SmartDashboard.putNumber("VelocityL", RobotMap.leftMainDrive.getVelocity());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());

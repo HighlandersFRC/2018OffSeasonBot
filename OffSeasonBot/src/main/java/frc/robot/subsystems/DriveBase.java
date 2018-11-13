@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.RobotMap;
 
 
 /**
@@ -16,5 +17,12 @@ public class DriveBase extends Subsystem {
         //setDefaultCommand(new MySpecialCommand());
         
       
-        }
+    }
+    public void setHighGear(){
+        RobotMap.shifters.set(RobotMap.highGear);
+    }
+    public void setLowGear(){
+        RobotMap.shifters.set(RobotMap.lowGear);
+    }
+
 }

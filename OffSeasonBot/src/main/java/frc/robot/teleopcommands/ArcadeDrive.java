@@ -25,7 +25,11 @@ public class ArcadeDrive extends Command {
   private double sensitivity = 0.75;
   private double leftPower;
   private double rightPower;
+  private double throttleJoystickValue;
+  private double turnJoystickValue;
+  private double triggerBrakeValue;
   public ArcadeDrive() {
+    requires(RobotMap.drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -38,15 +42,18 @@ public class ArcadeDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-	  ratio = Math.abs(throttel);
-    throttel = OI.joyStickOne.getRawAxis(1);  
-    if(Math.abs(OI.joyStickOne.getRawAxis(4))>deadZone) {	
-    	turn = OI.joyStickOne.getRawAxis(4);
+    throttleJoystickValue = OI.joyStickOne.getRawAxis(1);
+    turnJoystickValue = OI.joyStickOne.getRawAxis(4);
+    triggerBrakeValue = OI.joyStickOne.getRawAxis(3);
+    throttel = throttleJoystickValue;  
+    ratio = Math.abs(throttel);
+    if(Math.abs(turnJoystickValue)>deadZone) {	
+    	turn = turnJoystickValue;
     }
     else {
     	turn = 0;
     }
-    if(Math.abs(OI.joyStickOne.getRawAxis(1))>deadZone){
+    if(Math.abs(throttleJoystickValue)>deadZone){
     	leftPower = (throttel - (sensitivity*turn*ratio));
     	rightPower = (throttel + (sensitivity*turn*ratio));
     }
@@ -54,7 +61,7 @@ public class ArcadeDrive extends Command {
     	leftPower = (-turn);
     	rightPower = (turn); 
     }
-    if(OI.joyStickOne.getRawAxis(3)>0.5) {
+    if(triggerBrakeValue>0.5) {
     	leftPower = (-turn);
     	rightPower= (turn);
     }
@@ -73,13 +80,12 @@ public class ArcadeDrive extends Command {
     
    
     if(OI.shiftUp.get()) {
-  		RobotMap.shifters.set(RobotMap.highGear);
-  	}
-  	else if(OI.shiftDown.get()) {
-  		RobotMap.shifters.set(RobotMap.lowGear);
-  	}
+      RobotMap.drive.setHighGear();
+    }
+    else if(OI.shiftDown.get()) {
+      RobotMap.drive.setLowGear();
+    }
   	if(RobotMap.shifters.get() == RobotMap.highGear) {
-      
   		for(TalonSRX talon:RobotMap.driveMotors) {
   	    	talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
   	    	talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
@@ -87,7 +93,6 @@ public class ArcadeDrive extends Command {
   	    	talon.enableCurrentLimit(true);
   	    	}
         sensitivity =1.75;
-
   	}
   	else if(RobotMap.shifters.get() == RobotMap.lowGear) {
   		for(TalonSRX talon:RobotMap.driveMotors) {	
@@ -97,7 +102,6 @@ public class ArcadeDrive extends Command {
   	    	talon.enableCurrentLimit(true);
   	    }
         sensitivity =1.25;
-
   	}
    }
   
