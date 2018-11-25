@@ -52,25 +52,27 @@ public class PathRunner extends Command {
    //this is a sperate section of code that runs at a different update rate than the rest, this is necessary to match the dt in this
    //instance 0.05 seconds specified when the path is created
     public void run(){
+      //TODO check if you need to change these to just (desiredAngle + actualAngle)
       if(path.getReversed()){
         leftOutput = lFollower.calculate(-leftEncoder.getDistance());
         rightOutput = rFollower.calculate(-rightEncoder.getDistance());
-        desiredAngle = Pathfinder.r2d(lFollower.getHeading());
-        actualAngle =(pathNavx.currentReverseYaw());
+        desiredAngle = (Pathfinder.boundHalfDegrees(Pathfinder.r2d(lFollower.getHeading())));
+        actualAngle = pathNavx.currentReverseYaw();
         turnError = Pathfinder.boundHalfDegrees((desiredAngle - actualAngle));
       }
       else{
         leftOutput = lFollower.calculate(leftEncoder.getDistance());
         rightOutput = rFollower.calculate(rightEncoder.getDistance());
-        desiredAngle =Pathfinder.r2d(lFollower.getHeading());
-        actualAngle =pathNavx.currentYaw();
+        desiredAngle = (Pathfinder.boundHalfDegrees(Pathfinder.r2d(lFollower.getHeading())));
+        actualAngle = pathNavx.currentYaw();
         turnError = Pathfinder.boundHalfDegrees(desiredAngle - actualAngle);
+        
       }
        
       turn = kt*turnError;
       //all of the above lines are to calculate your navx input which is scaled and then the velocities are modified accordingly
       if(path.getReversed()){
-        RobotMap.leftDriveLead.set(ControlMode.PercentOutput, (-(leftOutput-turn)));
+        RobotMap.leftDriveLead.set(ControlMode.PercentOutput,(-(leftOutput-turn)));
         RobotMap.rightDriveLead.set(ControlMode.PercentOutput,(-(rightOutput+turn)));
       }
       else{
@@ -78,9 +80,11 @@ public class PathRunner extends Command {
         RobotMap.rightDriveLead.set(ControlMode.PercentOutput,((rightOutput+turn)));
       }
      
-      SmartDashboard.putNumber("RightTurnError", (turnError));
-      SmartDashboard.putNumber("leftreportedDistance",leftEncoder.getDistance());
-      SmartDashboard.putNumber("rightreportedDistance",rightEncoder.getDistance());
+      //SmartDashboard.putNumber("DesiredAngle", (Pathfinder.boundHalfDegrees(Pathfinder.r2d(lFollower.getHeading()))));
+      // SmartDashboard.putNumber("actualAngle", (pathNavx.currentYaw()));
+      //SmartDashboard.putNumber("actualreverseAngle", pathNavx.currentReverseYaw());
+      //SmartDashboard.putNumber("turnError", (actualAngle-desiredAngle));
+     
     }
 
   }
@@ -95,7 +99,7 @@ public class PathRunner extends Command {
     //this is to zero my encoders
     leftEncoder.softReset();
     rightEncoder.softReset();
-    kt = (path.getVelocity()/RobotConfig.maxVelocity)*0.017525;
+    kt = (path.getVelocity()/RobotConfig.maxVelocity)*0.05;
     //this is to have a seperate navx for just the path and make sure that that is zereod
     pathNavx.softResetYaw(RobotMap.navx.getYaw());
     //below is where the runnable seen above is implemented and setup
@@ -106,6 +110,10 @@ public class PathRunner extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+  }
+  
+  public double currentPathTime(){
+    return lFollower.getSegment().dt;
   }
 
   // Make this return true when this Command no longer needs to run execute()

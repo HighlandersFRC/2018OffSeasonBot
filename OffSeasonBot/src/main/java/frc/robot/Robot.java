@@ -51,7 +51,6 @@ public class Robot extends TimedRobot {
     //smart.start();
    // m_chooser.addDefault("Default Auto", new ExampleCommand());
     // chooser.addObject("My Auto", new MyAutoCommand());
-    SmartDashboard.putData("Auto mode", m_chooser);
   }
 
   /**
@@ -81,7 +80,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putNumber("navxValue", testNavx.currentYaw());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
@@ -125,8 +123,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
-    SmartDashboard.putNumber("VelocityR", RobotMap.rightMainDrive.getVelocity());
-    SmartDashboard.putNumber("VelocityL", RobotMap.leftMainDrive.getVelocity());
+   
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
@@ -150,8 +147,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("distancer", RobotMap.rightMainDrive.getDistance());
-    SmartDashboard.putNumber("distancel", RobotMap.leftMainDrive.getDistance());
+   
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }

@@ -10,7 +10,6 @@ public class DriveEncoder {
 	
 	public DriveEncoder(TalonSRX talon, int startingValue) {
 		masterTalon = talon;
-		
 	}
 	public double getEncoderValue() {
 		return masterTalon.getSelectedSensorPosition(0)-startingValue;
@@ -27,8 +26,8 @@ public class DriveEncoder {
 	public void softReset(){
 		startingValue = masterTalon.getSelectedSensorPosition(0);
 	}
-
-	
-	
+	public double convertftpersToNativeUnitsper100ms(double feetPerSecond){
+		return (((feetPerSecond/10)*(12))/(RobotConfig.wheelCircum))*RobotConfig.encoderTicsPerWheelRotation;
+	}
 
 }

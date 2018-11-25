@@ -21,10 +21,9 @@ public class Navx {
 		return ((imu.getYaw())-originalYaw);
 	}
 	public double currentReverseYaw(){
-		return ((-imu.getYaw())-originalYaw);
+		return ((-imu.getYaw())+originalYaw) ;
 	}
 	public boolean isMoving() {
-	
 		return imu.isMoving();
 	}
 

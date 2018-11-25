@@ -13,24 +13,28 @@ public class PathList {
   public PathSetup complexPath1;
   private Waypoint[] complexPath1points = new Waypoint[] {
     new Waypoint(0, 0, 0),
-    new Waypoint(6.5, 0, 0),
-    new Waypoint(8.5,4,90),
-    new Waypoint(12,8,0)
-   
+    new Waypoint(12,2.5, 0)
   };
   public PathSetup complexPath2;
   private Waypoint[] complexPath2points = new Waypoint[] {
     new Waypoint(0, 0, 0),
-    new Waypoint(12,-8, 0), 
+    new Waypoint(2,-1.5, 90), 
   };
-  private double complexPathVelocity = 4;
+  public PathSetup complexPath3;
+  private Waypoint[] complexPath3points = new Waypoint[] {
+    new Waypoint(0, 0, 0),
+    new Waypoint(2,1.5, 90), 
+  };
+  private double complexPathVelocity = 10;
   public PathList() {
-    complexPath2 = new PathSetup(complexPath2points, complexPathVelocity, true);
+    
     complexPath1 = new PathSetup(complexPath1points, complexPathVelocity,false);
-
+    complexPath2 = new PathSetup(complexPath2points, complexPathVelocity, false);
+    complexPath3 = new PathSetup(complexPath3points, complexPathVelocity, true);
   }
   public void resetAllPaths(){
     complexPath1.resetPath();
+    complexPath2.resetPath();
   }
 }
  
