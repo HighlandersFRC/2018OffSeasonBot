@@ -18,11 +18,9 @@ public class ComplexPath extends CommandGroup {
   public ComplexPath() {
     PathRunner path1 = new PathRunner(RobotMap.universalPathlist.complexPath1);
     PathRunner path2 = new PathRunner(RobotMap.universalPathlist.complexPath2);
-    PathRunner path3 = new PathRunner(RobotMap.universalPathlist.complexPath3);
     addSequential(path1);
-    addSequential( new CascadingPIDTurn(180));
     addSequential(path2);
-   // addSequential(path3);
+    //addSequential(path3);
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

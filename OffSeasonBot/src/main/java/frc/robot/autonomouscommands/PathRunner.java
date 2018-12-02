@@ -35,6 +35,7 @@ public class PathRunner extends Command {
   private Notifier pathNotifier;
   private DriveEncoder leftEncoder;
   private DriveEncoder rightEncoder;
+  private Odometry odometry;
  
   
   public PathRunner(PathSetup chosenpath) {
@@ -44,6 +45,8 @@ public class PathRunner extends Command {
     pathNavx = new Navx(RobotMap.navx);
     leftEncoder = new DriveEncoder(RobotMap.leftDriveLead, 0);
     rightEncoder = new DriveEncoder(RobotMap.rightDriveLead, 0);
+    odometry = new Odometry();
+    odometry.start();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -79,11 +82,13 @@ public class PathRunner extends Command {
         RobotMap.leftDriveLead.set(ControlMode.PercentOutput, ((leftOutput-turn)));
         RobotMap.rightDriveLead.set(ControlMode.PercentOutput,((rightOutput+turn)));
       }
+      if(!lFollower.isFinished()){
      
-      //SmartDashboard.putNumber("DesiredAngle", (Pathfinder.boundHalfDegrees(Pathfinder.r2d(lFollower.getHeading()))));
-      // SmartDashboard.putNumber("actualAngle", (pathNavx.currentYaw()));
-      //SmartDashboard.putNumber("actualreverseAngle", pathNavx.currentReverseYaw());
-      //SmartDashboard.putNumber("turnError", (actualAngle-desiredAngle));
+      SmartDashboard.putNumber("xError", lFollower.getSegment().x- odometry.getX());
+      SmartDashboard.putNumber("yError", lFollower.getSegment().y- odometry.gety());
+      SmartDashboard.putNumber("thetaError",Pathfinder.r2d(lFollower.getSegment().heading)- odometry.gettheta());
+      }
+     // SmartDashboard.putNumber("turnError", (actualAngle-desiredAngle));
      
     }
 
@@ -105,6 +110,7 @@ public class PathRunner extends Command {
     //below is where the runnable seen above is implemented and setup
     pathNotifier = new Notifier(new PathRunnable());
     pathNotifier.startPeriodic(0.05);
+    odometry.zero();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -129,10 +135,11 @@ public class PathRunner extends Command {
   @Override
   protected void end() {
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
-    RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
+    RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
     pathNavx.softResetYaw(RobotMap.navx.getYaw());
     pathNotifier.stop();
-    
+    odometry.zero();
+    odometry.cancel();
   }
 
   // Called when another command which requires one or more of the same

@@ -57,7 +57,6 @@ public class CascadingPIDTurn extends Command {
     turnPID.updatePID(navx.currentAngle());
     leftDriveTrainVelocityPID.changeDesiredSpeed(-turnPID.getResult());
     rightDriveTrainVelocityPID.changeDesiredSpeed(turnPID.getResult());
-    SmartDashboard.putNumber("error",Math.abs(navx.currentAngle()-desiredAngle));
   }
 
   // Make this return true when this Command no longer needs to run execute()

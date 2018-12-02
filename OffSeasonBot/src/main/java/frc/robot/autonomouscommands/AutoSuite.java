@@ -2,18 +2,14 @@ package frc.robot.autonomouscommands;
 
 public class AutoSuite {
     private ComplexPath complexPath;
-    private KfDriveTrainCalculation kfDriveTrainCalculation;
-    private CascadingPIDTurn cascadingPIDTurn;
+    private Odometry odometry;
     public AutoSuite() {
         complexPath = new ComplexPath();
-        kfDriveTrainCalculation = new KfDriveTrainCalculation();
-        cascadingPIDTurn = new CascadingPIDTurn(90);
-       
+        odometry = new Odometry();
 	}
     public void startAutoCommands() {
         complexPath.start();	
-       // kfDriveTrainCalculation.start();
-       //cascadingPIDTurn.start();
+        odometry.start();
     }
 
 }

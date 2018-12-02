@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
+import frc.robot.autonomouscommands.Odometry;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.autonomouscommands.PathSetup;
 import frc.robot.sensors.Navx;
@@ -34,10 +35,7 @@ public class Robot extends TimedRobot {
   private TeleopSuite teleopS;
   private AutoSuite autoS;
   private RobotConfig config;
-  private PathSetup pathSetup;
-  private Navx testNavx;
   Command m_autonomousCommand;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -47,10 +45,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();
     config = new RobotConfig();
-    
-    //smart.start();
-   // m_chooser.addDefault("Default Auto", new ExampleCommand());
-    // chooser.addObject("My Auto", new MyAutoCommand());
   }
 
   /**
@@ -72,10 +66,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    testNavx = new Navx(RobotMap.navx);
-    testNavx.softResetYaw(RobotMap.navx.getYaw()-180);
     RobotMap.universalPathlist.resetAllPaths();
-
   }
 
   @Override
@@ -99,19 +90,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     autoS = new AutoSuite();
     autoS.startAutoCommands();
-
     config.autoConfig();
-    
-    m_autonomousCommand = m_chooser.getSelected();
-
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
+   
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }
