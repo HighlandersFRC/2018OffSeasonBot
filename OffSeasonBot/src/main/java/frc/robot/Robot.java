@@ -19,6 +19,7 @@ import frc.robot.autonomouscommands.AutoSuite;
 import frc.robot.autonomouscommands.Odometry;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.autonomouscommands.PathSetup;
+import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
 import frc.robot.teleopcommands.TeleopSuite;
 
@@ -36,6 +37,10 @@ public class Robot extends TimedRobot {
   private AutoSuite autoS;
   private RobotConfig config;
   Command m_autonomousCommand;
+  private DriveEncoder leftDriveEncoder;
+  private DriveEncoder rightDriveEncoder;
+
+  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -45,6 +50,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();
     config = new RobotConfig();
+    leftDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, 1);
+    rightDriveEncoder = new DriveEncoder(RobotMap.rightDriveLead, 4);
   }
 
   /**

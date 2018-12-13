@@ -18,8 +18,10 @@ public class ComplexPath extends CommandGroup {
   public ComplexPath() {
     PathRunner path1 = new PathRunner(RobotMap.universalPathlist.complexPath1);
     PathRunner path2 = new PathRunner(RobotMap.universalPathlist.complexPath2);
+    addParallel(new PurePursuitController(RobotMap.universalPathlist.complexPath1));
     addSequential(path1);
-    addSequential(path2);
+   // addParallel(new PurePursuitController(RobotMap.universalPathlist.complexPath2));
+   // addSequential(path2);
     //addSequential(path3);
     // Add Commands here:
     // e.g. addSequential(new Command1());

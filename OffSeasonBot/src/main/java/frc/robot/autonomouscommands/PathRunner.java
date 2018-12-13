@@ -45,7 +45,7 @@ public class PathRunner extends Command {
     pathNavx = new Navx(RobotMap.navx);
     leftEncoder = new DriveEncoder(RobotMap.leftDriveLead, 0);
     rightEncoder = new DriveEncoder(RobotMap.rightDriveLead, 0);
-    odometry = new Odometry();
+    odometry = new Odometry(false);
     odometry.start();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -55,7 +55,6 @@ public class PathRunner extends Command {
    //this is a sperate section of code that runs at a different update rate than the rest, this is necessary to match the dt in this
    //instance 0.05 seconds specified when the path is created
     public void run(){
-      //TODO check if you need to change these to just (desiredAngle + actualAngle)
       if(path.getReversed()){
         leftOutput = lFollower.calculate(-leftEncoder.getDistance());
         rightOutput = rFollower.calculate(-rightEncoder.getDistance());
@@ -82,16 +81,10 @@ public class PathRunner extends Command {
         RobotMap.leftDriveLead.set(ControlMode.PercentOutput, ((leftOutput-turn)));
         RobotMap.rightDriveLead.set(ControlMode.PercentOutput,((rightOutput+turn)));
       }
-      if(!lFollower.isFinished()){
-     
-      SmartDashboard.putNumber("xError", lFollower.getSegment().x- odometry.getX());
-      SmartDashboard.putNumber("yError", lFollower.getSegment().y- odometry.gety());
-      SmartDashboard.putNumber("thetaError",Pathfinder.r2d(lFollower.getSegment().heading)- odometry.gettheta());
-      }
-     // SmartDashboard.putNumber("turnError", (actualAngle-desiredAngle));
-     
+     // SmartDashboard.putNumber("odometryx", odometry.getX());
+     // SmartDashboard.putNumber("odometryy",odometry.getY());
+     // SmartDashboard.putNumber("odometrytheta", odometry.gettheta());
     }
-
   }
 
   // Called just before this Command runs the first time
@@ -111,6 +104,12 @@ public class PathRunner extends Command {
     pathNotifier = new Notifier(new PathRunnable());
     pathNotifier.startPeriodic(0.05);
     odometry.zero();
+    if(path.getReversed()){
+      odometry.reverseOdometry(true);
+    }
+    else{
+      odometry.reverseOdometry(false);
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -7,15 +7,9 @@
 
 package frc.robot.autonomouscommands;
 
-import java.util.Vector;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.drive.Vector2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
-import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
@@ -33,36 +27,59 @@ public class Odometry extends Command {
   private double rightSide;
   private double rightDelta;
   private DriveEncoder rightDriveEncoder;
-  private double centerVelocity;
+  private double centerDelta;
   private double x;
   private double y;
   private double yNext;
   private double xNext;
   private Notifier odometryrunner;
   private double dt;
-  public Odometry() {
+  private boolean isReversed;
+  public Odometry(boolean reversed) {
     leftDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, RobotMap.leftDriveLead.getSelectedSensorPosition(0));
     rightDriveEncoder = new DriveEncoder(RobotMap.rightDriveLead, RobotMap.rightDriveLead.getSelectedSensorPosition(0));
     navx = new Navx(RobotMap.navx);
+    isReversed = reversed;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+  }
+  public void reverseOdometry(boolean revsered){
+    isReversed = revsered;
+
   }
   private class OdometryRunnable implements Runnable{
     //this is a sperate section of code that runs at a different update rate than the rest, this is necessary to match the dt
      public void run(){
-      leftSideNext = leftDriveEncoder.getDistance();
-      rightSideNext = rightDriveEncoder.getDistance();
-      thetaNext = navx.currentAngle();
-      leftDelta = (leftSideNext-leftSide);
-      rightDelta = (rightSideNext-rightSide);
-      centerVelocity = (leftDelta+rightDelta)/2;
-      xNext = x+centerVelocity*Math.cos(Pathfinder.d2r(theta));
-      yNext = y+centerVelocity*Math.sin(Pathfinder.d2r(theta));
-      x = xNext;
-      y = yNext;
-      theta = thetaNext;
-      leftSide = leftSideNext;
-      rightSide = rightSideNext;
+      if(isReversed){
+        leftSideNext = leftDriveEncoder.getDistance();
+        rightSideNext = rightDriveEncoder.getDistance();
+        thetaNext = navx.currentReverseYaw();
+        leftDelta = (leftSideNext-leftSide);
+        rightDelta = (rightSideNext-rightSide);
+        centerDelta = (leftDelta+rightDelta)/2;
+        xNext = x-centerDelta*Math.cos(Pathfinder.d2r(thetaNext));
+        yNext = y-centerDelta*Math.sin(Pathfinder.d2r(thetaNext));
+        x = xNext;
+        y = yNext;
+        theta = thetaNext;
+        leftSide = leftSideNext;
+        rightSide = rightSideNext;
+      }
+      else{
+        leftSideNext = leftDriveEncoder.getDistance();
+        rightSideNext = rightDriveEncoder.getDistance();
+        thetaNext = navx.currentYaw();
+        leftDelta = (leftSideNext-leftSide);
+        rightDelta = (rightSideNext-rightSide);
+        centerDelta = (leftDelta+rightDelta)/2;
+        xNext = x+centerDelta*Math.cos(Pathfinder.d2r(thetaNext));
+        yNext = y+centerDelta*Math.sin(Pathfinder.d2r(thetaNext));
+        x = xNext;
+        y = yNext;
+        theta = thetaNext;
+        leftSide = leftSideNext;
+        rightSide = rightSideNext;
+      }
      }
  
    }
@@ -70,13 +87,13 @@ public class Odometry extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    odometryrunner = new Notifier(new OdometryRunnable());
-    dt = 0.01;
-    odometryrunner.startPeriodic(dt);
     navx.softResetAngle(navx.currentAngle());
     navx.softResetYaw(navx.currentYaw());
     leftDriveEncoder.softReset();
     rightDriveEncoder.softReset();
+    odometryrunner = new Notifier(new OdometryRunnable());
+    dt = 0.005;
+    odometryrunner.startPeriodic(dt);
   }
 
   public void zero(){
@@ -86,11 +103,15 @@ public class Odometry extends Command {
     navx.softResetYaw(navx.currentYaw());
     leftDriveEncoder.softReset();
     rightDriveEncoder.softReset();
+    leftSide = 0;
+    leftSideNext = 0;
+    rightSide = 0;
+    rightSideNext= 0;
   }
   public double getX(){
     return x;
   }
-  public double gety(){
+  public double getY(){
     return y;
   }
   public double gettheta(){

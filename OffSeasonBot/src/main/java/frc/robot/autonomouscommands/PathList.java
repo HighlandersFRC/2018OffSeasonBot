@@ -18,6 +18,8 @@ public class PathList {
     new Waypoint(8.5,4,Pathfinder.d2r(90)),
     new Waypoint(12,8.5, 0)
   };
+  
+  
   public PathSetup complexPath2;
   private Waypoint[] complexPath2points = new Waypoint[] {
     new Waypoint(0, 0, 0),
@@ -25,7 +27,6 @@ public class PathList {
   };
   private double complexPathVelocity = 6;
   public PathList() {
-    
     complexPath1 = new PathSetup(complexPath1points, complexPathVelocity,false);
     complexPath2 = new PathSetup(complexPath2points, complexPathVelocity, true);
   }
