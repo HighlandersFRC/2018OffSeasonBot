@@ -13,6 +13,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
@@ -54,7 +56,7 @@ public class RobotMap {
 		public static DriveEncoder leftMainDrive = new DriveEncoder(leftDriveLead,RobotMap.leftDriveLead.getSelectedSensorPosition(0));
 		public static DriveEncoder rightMainDrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
 		public static Navx mainNavx = new Navx(navx);	
-        	
+		
 		//Array of drive motors to simplify configuration
 		public static TalonSRX driveMotors[] = {
 				RobotMap.leftDriveLead,
@@ -65,9 +67,9 @@ public class RobotMap {
        			RobotMap.rightDriveFollowerTwo
         };
 		public static DriveBase drive = new DriveBase();
-
+		public static double it = Timer.getFPGATimestamp();
 		public static PathList universalPathlist = new PathList();
-	
+		public static double ft = Timer.getFPGATimestamp();
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;

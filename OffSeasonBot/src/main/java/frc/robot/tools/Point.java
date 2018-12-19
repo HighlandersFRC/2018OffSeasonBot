@@ -14,7 +14,7 @@ public class Point {
     public double getXPos(){
         return xpos;
     }
-    public double getYpos(){
+    public double getYPos(){
         return ypos;
     }
     

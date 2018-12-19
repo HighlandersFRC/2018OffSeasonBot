@@ -37,8 +37,7 @@ public class Robot extends TimedRobot {
   private AutoSuite autoS;
   private RobotConfig config;
   Command m_autonomousCommand;
-  private DriveEncoder leftDriveEncoder;
-  private DriveEncoder rightDriveEncoder;
+  
 
   
 
@@ -50,8 +49,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();
     config = new RobotConfig();
-    leftDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, 1);
-    rightDriveEncoder = new DriveEncoder(RobotMap.rightDriveLead, 4);
+    SmartDashboard.putNumber("dt", RobotMap.ft-RobotMap.it);
   }
 
   /**
@@ -79,6 +77,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
+    
     Scheduler.getInstance().run();
   }
 
@@ -134,7 +133,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-   
+    
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }

@@ -12,6 +12,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotMap;
 import frc.robot.sensors.DriveEncoder;
 
 public class DriveTrainVelocityPID extends Command {
@@ -50,6 +52,7 @@ public class DriveTrainVelocityPID extends Command {
   public void changeDesiredSpeed(double feetPerSecond){
     speed = feetPerSecond;
     talon.set(ControlMode.Velocity, driveEncoder.convertftpersToNativeUnitsper100ms(speed));
+    SmartDashboard.putNumber("talon" + talon.getDeviceID() + "velocity",driveEncoder.getVelocity());
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -68,6 +71,8 @@ public class DriveTrainVelocityPID extends Command {
   
   @Override
   protected void end() {
+    RobotMap.leftDriveFollowerOne.set(ControlMode.PercentOutput, 0);
+    RobotMap.rightDriveFollowerOne.set(ControlMode.PercentOutput, 0);
   }
 
   // Called when another command which requires one or more of the same

@@ -81,9 +81,9 @@ public class PathRunner extends Command {
         RobotMap.leftDriveLead.set(ControlMode.PercentOutput, ((leftOutput-turn)));
         RobotMap.rightDriveLead.set(ControlMode.PercentOutput,((rightOutput+turn)));
       }
-     // SmartDashboard.putNumber("odometryx", odometry.getX());
-     // SmartDashboard.putNumber("odometryy",odometry.getY());
-     // SmartDashboard.putNumber("odometrytheta", odometry.gettheta());
+      SmartDashboard.putNumber("odometryx", odometry.getX());
+      SmartDashboard.putNumber("odometryy",odometry.getY());
+      SmartDashboard.putNumber("odometrytheta", odometry.gettheta());
     }
   }
 
@@ -110,6 +110,7 @@ public class PathRunner extends Command {
     else{
       odometry.reverseOdometry(false);
     }
+    SmartDashboard.putNumber("number", path.getMainPath().length());
   }
 
   // Called repeatedly when this Command is scheduled to run

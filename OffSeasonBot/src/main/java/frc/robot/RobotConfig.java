@@ -13,7 +13,7 @@ public class RobotConfig {
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 6.0;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist = 2.54;//effective not measured, in ft
+	public static double robotBaseDist = 0.54;//effective not measured, in ft
 	
 	public static double openLoopRampRate = 0.0;
 	
@@ -21,15 +21,15 @@ public class RobotConfig {
 
 	public static int driveMotorContinuousCurrentHighGear = 16;
 	public static int driveMotorContinuousCurrentLowGear = 25;
-	public static int driveMotorContinuousCurrentAuto = 16;
+	public static int driveMotorContinuousCurrentAuto = 13;
 
 	public static int driveMotorPeakCurrentHighGear= 16;
 	public static int driveMotorPeakCurrentLowGear = 60;
-	public static int driveMotorPeakCurrentAuto = 18;	
+	public static int driveMotorPeakCurrentAuto = 15;	
 			
 	public static int driveMotorPeakCurrentDurationHighGear = 0;
 	public static int driveMotorPeakCurrentDurationLowGear = 100;
-	public static int driveMotorPeakCurrentDurationAuto = 100;		//Amps
+	public static int driveMotorPeakCurrentDurationAuto = 0;		//Amps
 
 	public static double maxVelocity = 11.9;//this is not for teleop this is adjusted for voltage compensation
 	public static double maxAcceleration = 9;
