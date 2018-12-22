@@ -13,17 +13,17 @@ public class RobotConfig {
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 6.0;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist = 0.54;//effective not measured, in ft
+	public static double robotBaseDist = 1.9;//effective not measured, in ft
 	
 	public static double openLoopRampRate = 0.0;
 	
 	public static double voltageControlMax = 11.0;
 
-	public static int driveMotorContinuousCurrentHighGear = 16;
+	public static int driveMotorContinuousCurrentHighGear = 13;
 	public static int driveMotorContinuousCurrentLowGear = 25;
 	public static int driveMotorContinuousCurrentAuto = 13;
 
-	public static int driveMotorPeakCurrentHighGear= 16;
+	public static int driveMotorPeakCurrentHighGear= 13;
 	public static int driveMotorPeakCurrentLowGear = 60;
 	public static int driveMotorPeakCurrentAuto = 15;	
 			

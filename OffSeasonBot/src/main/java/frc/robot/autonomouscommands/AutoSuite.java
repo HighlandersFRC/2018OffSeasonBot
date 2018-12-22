@@ -2,7 +2,7 @@ package frc.robot.autonomouscommands;
 
 public class AutoSuite {
     private ComplexPath complexPath;
-    private PurePursuitController purePursuitController;
+  
     //private CascadingPIDTurn turn;
     public AutoSuite() {
         complexPath = new ComplexPath();
@@ -10,7 +10,9 @@ public class AutoSuite {
     }
     public void startAutoCommands() {
         complexPath.start();	
-        //turn.start();
+    }
+    public void End(){
+        complexPath.cancel();
     }
 
 }

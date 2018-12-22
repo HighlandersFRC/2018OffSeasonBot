@@ -16,6 +16,7 @@ import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArcadeDrive extends Command {
   private double deadZone = 0.1;
@@ -87,21 +88,21 @@ public class ArcadeDrive extends Command {
     }
   	if(RobotMap.shifters.get() == RobotMap.highGear) {
   		for(TalonSRX talon:RobotMap.driveMotors) {
-  	    	talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);
+  	    	talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, 0);
   	    	talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentHighGear, 0);  
   	    	talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationHighGear, 0);
   	    	talon.enableCurrentLimit(true);
   	    	}
-        sensitivity =1.75;
+      sensitivity =1.75;
   	}
   	else if(RobotMap.shifters.get() == RobotMap.lowGear) {
   		for(TalonSRX talon:RobotMap.driveMotors) {	
-  			  talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, RobotConfig.timeOut);
+  			  talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentLowGear, 0);
   	    	talon.configPeakCurrentLimit(RobotConfig.driveMotorPeakCurrentLowGear, 0);  
   	    	talon.configPeakCurrentDuration(RobotConfig.driveMotorPeakCurrentDurationLowGear, 0);
   	    	talon.enableCurrentLimit(true);
-  	    }
-        sensitivity =1.25;
+  	  }
+      sensitivity =1.25;
   	}
    }
   

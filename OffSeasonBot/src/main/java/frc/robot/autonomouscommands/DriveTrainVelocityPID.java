@@ -24,6 +24,7 @@ public class DriveTrainVelocityPID extends Command {
   private double i;
   private double d;
   private int profile;
+  private boolean finish;
   private DriveEncoder driveEncoder;
   public DriveTrainVelocityPID(double chosenSpeed, TalonSRX chosenTalon, int profileSlot, double kf, double kp, double ki, double kd) {
     speed = chosenSpeed;
@@ -48,6 +49,7 @@ public class DriveTrainVelocityPID extends Command {
     talon.config_kI(profile, i, 0);
     talon.config_kD(profile, d, 0);
     talon.set(ControlMode.Velocity, driveEncoder.convertftpersToNativeUnitsper100ms(speed));
+    finish = false;
   }
   public void changeDesiredSpeed(double feetPerSecond){
     speed = feetPerSecond;
@@ -60,24 +62,29 @@ public class DriveTrainVelocityPID extends Command {
   protected void execute() {
   }
 
+ 
+  public void endPID(){
+    finish = true;
+  }
   // Make this return true when this Command no longer needs to run execute()
   //TODO DO NOT ALLOW THIS COMMAND TO RUN WITHOUT SOME EXTERNAL END STATE, DESTROY THIS OBJECT WHEN NO LONGER IN USE
   @Override
   protected boolean isFinished() {
-    return false;
+    return finish;
   }
 
   // Called once after isFinished returns true
   
   @Override
   protected void end() {
-    RobotMap.leftDriveFollowerOne.set(ControlMode.PercentOutput, 0);
-    RobotMap.rightDriveFollowerOne.set(ControlMode.PercentOutput, 0);
+    talon.set(ControlMode.Velocity, 0);
+    talon.set(ControlMode.PercentOutput, 0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    this.end();
   }
 }

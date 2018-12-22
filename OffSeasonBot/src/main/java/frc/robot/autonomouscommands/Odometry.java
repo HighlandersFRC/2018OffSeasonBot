@@ -35,6 +35,7 @@ public class Odometry extends Command {
   private Notifier odometryrunner;
   private double dt;
   private boolean isReversed;
+  private boolean finish;
   public Odometry(boolean reversed) {
     leftDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, RobotMap.leftDriveLead.getSelectedSensorPosition(0));
     rightDriveEncoder = new DriveEncoder(RobotMap.rightDriveLead, RobotMap.rightDriveLead.getSelectedSensorPosition(0));
@@ -94,6 +95,10 @@ public class Odometry extends Command {
     odometryrunner = new Notifier(new OdometryRunnable());
     dt = 0.005;
     odometryrunner.startPeriodic(dt);
+    finish = false;
+  }
+  public void endOdmetry(){
+    finish = true;
   }
 
   public void zero(){
@@ -128,6 +133,9 @@ public class Odometry extends Command {
   @Override
   protected boolean isFinished() {
     if(!RobotState.isAutonomous()){
+      return true;
+    }
+    if(finish){
       return true;
     }
     return false;

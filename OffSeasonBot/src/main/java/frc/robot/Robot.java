@@ -33,8 +33,8 @@ import frc.robot.teleopcommands.TeleopSuite;
  */
 public class Robot extends TimedRobot {
   public static OI m_oi;
-  private TeleopSuite teleopS;
-  private AutoSuite autoS;
+  private TeleopSuite teleopS = new TeleopSuite();
+  private AutoSuite autoS = new AutoSuite();
   private RobotConfig config;
   Command m_autonomousCommand;
   
@@ -71,6 +71,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    autoS.End();
     RobotMap.universalPathlist.resetAllPaths();
   }
 
@@ -94,7 +95,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    autoS = new AutoSuite();
+    
     autoS.startAutoCommands();
     config.autoConfig();
    
@@ -108,17 +109,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-
-   
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
 
   @Override
   public void teleopInit() {
-    teleopS = new TeleopSuite();
-    teleopS.startTeleopCommands();
-    config.teleopConfig();
+   
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -126,6 +124,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    autoS.End();
+    teleopS.startTeleopCommands();
+    config.teleopConfig();
   }
 
   /**

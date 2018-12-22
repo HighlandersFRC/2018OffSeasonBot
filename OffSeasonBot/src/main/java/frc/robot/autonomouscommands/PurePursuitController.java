@@ -40,12 +40,22 @@ public class PurePursuitController extends Command {
   private DriveTrainVelocityPID leftDriveTrainVelocityPID;
   private DriveTrainVelocityPID rightDriveTrainVelocityPID;
   private double desiredRobotCurvature;
-  private double kValue;
-  private double curveAdjustedVelocity;
-  private int lookAheadPointInt;
+  private Point startingPointOfLineSegment;
+  private boolean firstLookAheadFound;
+  private int startingNumberLA;
+  private Vector lineSegVector;
+  private Point endPointOfLineSegment;
+  private Point robotPos;
+  private Vector robotPosVector;
+  private double lookAheadIndexT1;
+  private double lookAheadIndexT2;
+  private double partialPointIndex;
+  private double lastPointIndex;
   
-  public PurePursuitController(PathSetup path) {
+  
+  public PurePursuitController(PathSetup path, double lookAhead){
     chosenPath = path;
+    lookAheadDistance = lookAhead;
     
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -55,23 +65,36 @@ public class PurePursuitController extends Command {
   @Override
   protected void initialize() {
     odometry = new Odometry(chosenPath.getReversed());
-    lookAheadPoint = new Point(0, 0);
-    closestPoint = new Point(0,0);
-    lastLookAheadPoint = new Point(0,0);
-    closestSegment = 0;
-    minDistanceToPoint = 100;
-    lookAheadDistance = 1.5;
-    startingNumber = 0;
-    kValue = 3;
-    lookAheadPointInt = 0;
     leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.0402026, 0.18, 0.0006, 0.80);
     rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.0406258, 0.18, 0.0006, 0.80);
     leftDriveTrainVelocityPID.start();
     rightDriveTrainVelocityPID.start();
     odometry.start();
     odometry.zero();
+    lookAheadPoint = new Point(0, 0);
+    closestPoint = new Point(0,0);
+    robotPos = new Point(0,0);
+    endPointOfLineSegment = new Point(0,0);
+    startingPointOfLineSegment = new Point(0,0);
+    lineSegVector = new Vector(0,0);
+    robotPosVector = new Vector(0,0);
+    lastLookAheadPoint = new Point(0,0);
+    closestSegment = 0;
+    minDistanceToPoint = 100;
+    lookAheadDistance = 1.0;
+    startingNumber = 0;
+    startingNumberLA  = 0;
+    lastPointIndex = 0;
+    partialPointIndex = 0;
+    lookAheadIndexT1 = 0;
+    lookAheadIndexT2 = 0;
+    desiredRobotCurvature = 0;
+    minDistanceToPoint = 0;
+    distToPoint = 0;
+    deltaX = 0;
+    deltaY = 0;
     notifier = new Notifier(new PathRunnable());
-    notifier.startPeriodic(0.005);
+    notifier.startPeriodic(0.05);
   }
   private class PathRunnable implements Runnable{
     public void run(){
@@ -85,30 +108,59 @@ public class PurePursuitController extends Command {
           closestPoint.setLocation(chosenPath.getMainPath().get(i).x, chosenPath.getMainPath().get(i).y);
         }
       }
-      SmartDashboard.putNumber("closestSegment", closestSegment);
       startingNumber = closestSegment;
       minDistanceToPoint = 100;
-      for(int i = chosenPath.getMainPath().length()-1; i>=closestSegment;i--){
-        Vector dist = new Vector();
-        dist.setX(chosenPath.getMainPath().get(i).x - odometry.getX());
-        dist.setY(chosenPath.getMainPath().get(i).y - odometry.getY());
-        SmartDashboard.putNumber("dist", dist.length());
-        if(dist.length()<lookAheadDistance){
-          lookAheadPointInt = i;
-          lookAheadPoint.setLocation(chosenPath.getMainPath().get(i).x, chosenPath.getMainPath().get(i).y);
+      firstLookAheadFound = false;
+      for(int i = startingNumberLA; i<chosenPath.getMainPath().length()-1;i++){
+        startingPointOfLineSegment.setLocation(chosenPath.getMainPath().get(i).x, chosenPath.getMainPath().get(i).y);
+        endPointOfLineSegment.setLocation(chosenPath.getMainPath().get(i+1).x, chosenPath.getMainPath().get(i+1).y);
+        robotPos.setLocation(odometry.getX(), odometry.getY());
+        lineSegVector.setX(endPointOfLineSegment.getXPos()-startingPointOfLineSegment.getXPos());
+        lineSegVector.setY(endPointOfLineSegment.getYPos()-startingPointOfLineSegment.getYPos());
+        robotPosVector.setX(startingPointOfLineSegment.getXPos()-robotPos.getXPos());
+        robotPosVector.setY(startingPointOfLineSegment.getYPos()-robotPos.getYPos());
+        double a = lineSegVector.dot(lineSegVector);
+        double b = 2*robotPosVector.dot(lineSegVector);
+        double c = robotPosVector.dot(robotPosVector)-lookAheadDistance*lookAheadDistance;
+        double discriminant = b*b - 4*a*c;
+        if(discriminant<0){
+          lookAheadPoint.setLocation(lastLookAheadPoint.getXPos(), lastLookAheadPoint.getYPos()); 
         }
-        if(i == closestSegment){
-          lookAheadPoint = lastLookAheadPoint;
+        else{
+          discriminant = Math.sqrt(discriminant);
+          lookAheadIndexT1 = (-b-discriminant)/(2*a);
+          lookAheadIndexT2 = (-b+discriminant)/(2*a);
+          if(lookAheadIndexT1>=0&&lookAheadIndexT1<=1){
+            partialPointIndex = i+lookAheadIndexT1;
+            if(partialPointIndex>lastPointIndex){
+              lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos()+ lookAheadIndexT1*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT1*lineSegVector.getyVec());
+              firstLookAheadFound = true;
+            }
+          }
+          
+          else if(lookAheadIndexT2>=0&&lookAheadIndexT2<=1){
+            partialPointIndex = i+lookAheadIndexT2;
+            if(partialPointIndex>lastPointIndex){
+              lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos() + lookAheadIndexT2*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT2*lineSegVector.getyVec());
+              firstLookAheadFound = true;
+              
+            }
+          }
+        }
+        if(firstLookAheadFound){
+          i = chosenPath.getMainPath().length();
+        }
+        else if(!firstLookAheadFound && i==chosenPath.getMainPath().length()-1){
+          lookAheadPoint.setLocation(lastLookAheadPoint.getXPos(), lastLookAheadPoint.getYPos());
         }
       }
+      lastLookAheadPoint.setLocation(lookAheadPoint.getXPos(), lookAheadPoint.getYPos());
+      if(partialPointIndex>lastPointIndex){
+        lastPointIndex = partialPointIndex;
+      }
+      startingNumberLA = (int)partialPointIndex;
       lastLookAheadPoint = lookAheadPoint;
-      SmartDashboard.putNumber("lookaheadX", lookAheadPoint.getXPos());
-      SmartDashboard.putNumber("lookaheadY", lookAheadPoint.getYPos());
-      SmartDashboard.putNumber("odometryx", odometry.getX());
-      SmartDashboard.putNumber("odometryy", odometry.getY());
-      
       findRobotCurvature();
-     
       setWheelVelocities(chosenPath.getMainPath().get(closestSegment).velocity, desiredRobotCurvature);
     }
   } 
@@ -116,19 +168,22 @@ public class PurePursuitController extends Command {
     double leftVelocity;
     double rightVelocity;
     double v = targetVelocity;
-    if(v<1){
-      v=-1;
-    }
     double c = curvature;
+    if(chosenPath.getReversed()){
+      v = -v;
+      c = -c;
+    }
     leftVelocity = v*(2+(c*RobotConfig.robotBaseDist))/2;
     rightVelocity = v*(2-(c*RobotConfig.robotBaseDist))/2;
-    SmartDashboard.putNumber("leftVelocity", leftVelocity);
-    SmartDashboard.putNumber("rightVelcotiy", rightVelocity);
-    SmartDashboard.putNumber("velocity",targetVelocity);
-    SmartDashboard.putNumber("curvature", curvature);
-  
-    leftDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
-    rightDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
+    if(chosenPath.getReversed()){
+      leftDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
+      rightDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
+    }
+    else{
+      leftDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
+      rightDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
+    }
+    
     
   }
   private void findRobotCurvature(){
@@ -149,20 +204,22 @@ public class PurePursuitController extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(!RobotState.isAutonomous()){
-      return true;
-    }
+   if(closestSegment == chosenPath.getMainPath().length()-1){
+     return true;
+   }
+   else{
+     return false;
+   }
     
-    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     notifier.stop();
-    odometry.cancel();
-    leftDriveTrainVelocityPID.cancel();
-    rightDriveTrainVelocityPID.cancel();
+    odometry.endOdmetry();
+    rightDriveTrainVelocityPID.endPID();
+    leftDriveTrainVelocityPID.endPID();
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
   }
