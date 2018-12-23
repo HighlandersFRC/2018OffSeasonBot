@@ -77,6 +77,7 @@ public class DriveTrainVelocityPID extends Command {
   
   @Override
   protected void end() {
+    System.out.println("hi");
     talon.set(ControlMode.Velocity, 0);
     talon.set(ControlMode.PercentOutput, 0);
   }

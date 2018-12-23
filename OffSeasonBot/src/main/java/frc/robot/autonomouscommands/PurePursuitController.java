@@ -9,12 +9,10 @@ package frc.robot.autonomouscommands;
 
 
 
-import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
@@ -51,12 +49,13 @@ public class PurePursuitController extends Command {
   private double lookAheadIndexT2;
   private double partialPointIndex;
   private double lastPointIndex;
-  
-  
-  public PurePursuitController(PathSetup path, double lookAhead){
+  private Vector distToEndVector;
+  private double curveAdjustedVelocity;
+  private double k;
+  public PurePursuitController(PathSetup path, double lookAhead, double kValue){
     chosenPath = path;
-    lookAheadDistance = lookAhead;
-    
+    lookAheadDistance = lookAhead;  
+    k = kValue;  
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -71,6 +70,7 @@ public class PurePursuitController extends Command {
     rightDriveTrainVelocityPID.start();
     odometry.start();
     odometry.zero();
+    distToEndVector = new Vector(12,12);
     lookAheadPoint = new Point(0, 0);
     closestPoint = new Point(0,0);
     robotPos = new Point(0,0);
@@ -93,8 +93,9 @@ public class PurePursuitController extends Command {
     distToPoint = 0;
     deltaX = 0;
     deltaY = 0;
+    curveAdjustedVelocity = 0;
     notifier = new Notifier(new PathRunnable());
-    notifier.startPeriodic(0.05);
+    notifier.startPeriodic(0.005);
   }
   private class PathRunnable implements Runnable{
     public void run(){
@@ -113,7 +114,7 @@ public class PurePursuitController extends Command {
       firstLookAheadFound = false;
       for(int i = startingNumberLA; i<chosenPath.getMainPath().length()-1;i++){
         startingPointOfLineSegment.setLocation(chosenPath.getMainPath().get(i).x, chosenPath.getMainPath().get(i).y);
-        endPointOfLineSegment.setLocation(chosenPath.getMainPath().get(i+1).x, chosenPath.getMainPath().get(i+1).y);
+        endPointOfLineSegment.setLocation(chosenPath.getMainPath().get(i+1).x, chosenPath.getMainPath().get(i+1).y); 
         robotPos.setLocation(odometry.getX(), odometry.getY());
         lineSegVector.setX(endPointOfLineSegment.getXPos()-startingPointOfLineSegment.getXPos());
         lineSegVector.setY(endPointOfLineSegment.getYPos()-startingPointOfLineSegment.getYPos());
@@ -158,12 +159,23 @@ public class PurePursuitController extends Command {
       if(partialPointIndex>lastPointIndex){
         lastPointIndex = partialPointIndex;
       }
+      distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
+      distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
+      SmartDashboard.putNumber("distoend", distToEndVector.length());
+      SmartDashboard.putNumber("x", odometry.getX());
+      SmartDashboard.putNumber("y",odometry.getY());
       startingNumberLA = (int)partialPointIndex;
       lastLookAheadPoint = lookAheadPoint;
       findRobotCurvature();
-      setWheelVelocities(chosenPath.getMainPath().get(closestSegment).velocity, desiredRobotCurvature);
+      curveAdjustedVelocity = Math.min(Math.abs(k/desiredRobotCurvature),chosenPath.getMainPath().get(closestSegment).velocity);
+      setWheelVelocities(curveAdjustedVelocity, desiredRobotCurvature);
     }
   } 
+  private void setOdometry(Point newPoint){
+    odometry.setX(newPoint.getXPos());
+    odometry.setY(newPoint.getYPos());
+    odometry.setTheta(newPoint.getTheta());
+  }
   private void setWheelVelocities(double targetVelocity, double curvature){
     double leftVelocity;
     double rightVelocity;
@@ -204,9 +216,9 @@ public class PurePursuitController extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-   if(closestSegment == chosenPath.getMainPath().length()-1){
+   if(distToEndVector.length()<0.1){
      return true;
-   }
+   }  
    else{
      return false;
    }
@@ -220,8 +232,12 @@ public class PurePursuitController extends Command {
     odometry.endOdmetry();
     rightDriveTrainVelocityPID.endPID();
     leftDriveTrainVelocityPID.endPID();
+    leftDriveTrainVelocityPID.cancel();
+    rightDriveTrainVelocityPID.cancel();
+    odometry.cancel();
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
+  
   }
 
   // Called when another command which requires one or more of the same

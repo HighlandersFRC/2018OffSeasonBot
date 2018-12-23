@@ -122,6 +122,15 @@ public class Odometry extends Command {
   public double gettheta(){
     return theta;
   }
+  public void setX(double xValue){
+    x = xValue;
+  }
+  public void setY(double yValue){
+    y = yValue;
+  }
+  public void setTheta(double thetaValue){
+    theta = thetaValue;
+  }
 
   // Called repeatedly when this Command is scheduled to run
   @Override

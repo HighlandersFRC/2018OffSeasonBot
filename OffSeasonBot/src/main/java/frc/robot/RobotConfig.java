@@ -13,7 +13,7 @@ public class RobotConfig {
     public static double encoderTicsPerWheelRotation = gearRatio*encoderTicsPerShaftRotation;
     public static double wheelDiam = 6.0;
 	public static double wheelCircum = Math.PI * wheelDiam;
-	public static double robotBaseDist = 1.9;//effective not measured, in ft
+	public static double robotBaseDist = 1.44;//effective not measured, in ft
 	
 	public static double openLoopRampRate = 0.0;
 	
