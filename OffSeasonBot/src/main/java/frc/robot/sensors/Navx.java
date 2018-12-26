@@ -2,6 +2,8 @@ package frc.robot.sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import jaci.pathfinder.Pathfinder;
+
 
 public class Navx {
 	private double NavxAngle = 0;
@@ -21,7 +23,7 @@ public class Navx {
 		return ((imu.getYaw())-originalYaw);
 	}
 	public double currentReverseYaw(){
-		return ((-imu.getYaw())+originalYaw) ;
+		return Pathfinder.boundHalfDegrees((imu.getYaw())-originalYaw+180) ;
 	}
 	public boolean isMoving() {
 		return imu.isMoving();

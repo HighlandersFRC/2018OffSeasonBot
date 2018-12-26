@@ -17,6 +17,11 @@ public class Point {
         xpos = x;
         ypos = y;
     }
+    public void setLocation(double x, double y, double t){
+        xpos = x;
+        ypos = y;
+        theta =t; 
+    }
     public double getXPos(){
         return xpos;
     }

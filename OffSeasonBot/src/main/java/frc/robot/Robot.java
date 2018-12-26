@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
   private AutoSuite autoS = new AutoSuite();
   private RobotConfig config;
   Command m_autonomousCommand;
+  private Odometry odometry;
   
 
   
@@ -127,6 +128,8 @@ public class Robot extends TimedRobot {
     autoS.End();
     teleopS.startTeleopCommands();
     config.teleopConfig();
+    odometry = new Odometry(false);
+    odometry.start();
   }
 
   /**
@@ -134,7 +137,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    
+    SmartDashboard.putNumber("y", odometry.getY());
+    SmartDashboard.putNumber("x",odometry.getX());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }

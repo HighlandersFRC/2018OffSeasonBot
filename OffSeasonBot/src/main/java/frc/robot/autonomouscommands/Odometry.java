@@ -55,8 +55,8 @@ public class Odometry extends Command {
         leftSideNext = leftDriveEncoder.getDistance();
         rightSideNext = rightDriveEncoder.getDistance();
         thetaNext = navx.currentReverseYaw();
-        leftDelta = (leftSideNext-leftSide);
-        rightDelta = (rightSideNext-rightSide);
+        leftDelta = -(leftSideNext-leftSide);
+        rightDelta = -(rightSideNext-rightSide);
         centerDelta = (leftDelta+rightDelta)/2;
         xNext = x-centerDelta*Math.cos(Pathfinder.d2r(thetaNext));
         yNext = y-centerDelta*Math.sin(Pathfinder.d2r(thetaNext));
@@ -131,6 +131,9 @@ public class Odometry extends Command {
   public void setTheta(double thetaValue){
     theta = thetaValue;
   }
+  public void setReversed(boolean reversed){
+    isReversed = reversed;
+  }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
@@ -141,9 +144,6 @@ public class Odometry extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(!RobotState.isAutonomous()){
-      return true;
-    }
     if(finish){
       return true;
     }

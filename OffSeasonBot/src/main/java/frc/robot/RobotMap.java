@@ -7,12 +7,14 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.MotControllerJNI;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.PathList;
@@ -40,6 +42,7 @@ public class RobotMap {
 		//Initialize all TalonsSRX
 		public static TalonSRX rightDriveLead = new TalonSRX(rightDriveLeadID);
 		public static TalonSRX leftDriveLead = new TalonSRX(leftDriveLeadID);
+		public static Spark blah = new Spark(0);
 		
 		public static TalonSRX rightDriveFollowerOne = new TalonSRX(rightDriveFollowerOneID);
 	    public static TalonSRX rightDriveFollowerTwo = new TalonSRX(rightDriveFollowerTwoID);
