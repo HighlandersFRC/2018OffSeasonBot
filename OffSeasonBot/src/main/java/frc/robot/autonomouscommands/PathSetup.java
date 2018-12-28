@@ -1,9 +1,4 @@
 package frc.robot.autonomouscommands;
-
-import java.util.ArrayList;
-
-import javax.swing.text.Segment;
-
 import frc.robot.RobotConfig;
 
 import jaci.pathfinder.Pathfinder;
@@ -19,19 +14,16 @@ public class PathSetup {
     private boolean isReversed;
     private Trajectory mainPath;
     private Waypoint[] points;
-    private ArrayList<Double> velocitiesArrayList;
     public PathSetup(Waypoint[] pathpoints, double pathspeed, boolean reverse){
         points = pathpoints;
         velocity = pathspeed;
         mainPath = generateMainPath();
         rightFollower = generateRightPathFollower();
-        leftFollower = generateLeftPathFollower();
-        velocitiesArrayList = new ArrayList();
-        velocitiesArrayList.clear();      
+        leftFollower = generateLeftPathFollower();   
         isReversed = reverse;
     }
     public Trajectory generateMainPath() {
-        // all units are in feet, cause MURICA!, basically the path calculations are assuming 1/20th of a second between updates, and a max velcoity of v ft/sec, a max acceleration of a ft/sec, and a max jerk of 75 feet/sec^3
+        // all units are in feet, cause MURICA!, basically the path calculations are assuming 1/20th of a second between updates, and a max velcoity of v ft/sec, a max acceleration of a ft/sec^2, and a max jerk of 75 feet/sec^3
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05,velocity,RobotConfig.maxAcceleration, 75.0);
         Trajectory trajectory = Pathfinder.generate(points, config);
         return trajectory;

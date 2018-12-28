@@ -82,7 +82,6 @@ public class Odometry extends Command {
         rightSide = rightSideNext;
       }
      }
- 
    }
 
   // Called just before this Command runs the first time

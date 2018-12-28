@@ -14,6 +14,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -60,6 +61,8 @@ public class RobotMap {
 		public static DriveEncoder rightMainDrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
 		public static Navx mainNavx = new Navx(navx);	
 		
+		public static SerialPort jevois1 = new SerialPort(115200, SerialPort.Port.kUSB);
+
 		//Array of drive motors to simplify configuration
 		public static TalonSRX driveMotors[] = {
 				RobotMap.leftDriveLead,

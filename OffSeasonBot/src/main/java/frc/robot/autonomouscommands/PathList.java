@@ -16,8 +16,10 @@ public class PathList {
   // be decreasing y units on the coordinate plane, while in the other you would be increasing y units
   public PathSetup complexPath1;
   private Waypoint[] complexPath1points = new Waypoint[] {
-    new Waypoint(15,5.15,0),
-    new Waypoint(0, 0, Pathfinder.d2r(90))
+    new Waypoint(15.75,6.5,0),
+    new Waypoint(10.75,6.5,0),
+    new Waypoint(6.65,7.5,0),
+    new Waypoint(0, 0, 0)
   };
   private double complexPathVelocity = 6;
   public PathList() {

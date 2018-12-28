@@ -1,7 +1,5 @@
 package frc.robot.teleopcommands;
 
-import frc.robot.autonomouscommands.Odometry;
-
 public class TeleopSuite {
 	private ArcadeDrive arcadeDrive;
 	private TankDrive driveControl;

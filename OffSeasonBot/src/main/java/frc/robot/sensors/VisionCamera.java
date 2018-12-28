@@ -5,27 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.autonomouscommands;
+package frc.robot.sensors;
 
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.RobotMap;
-import frc.robot.sensors.VisionCamera;
-import frc.robot.tools.Point;
 import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.Waypoint;
 
-public class GetToTarget extends Command {
-  private double complexPathVelocity = 6;
-  private Waypoint[] pathPoints;
-  private PathSetup pathToTarget;
-  private PurePursuitController controller;
-  private VisionCamera camera;
+public class VisionCamera extends Command { 
+  private SerialPort visionCamera;
+  private double x;
+  private double y;
+  private volatile double angle;
+  private volatile double distance;
+  private String cameraReadout;
+  private int positionOfSpace;
+  private String distString;
+  private String angleString;
+  private boolean shouldRun;
   private Notifier cameraNotifier;
-  private boolean isAtTarget;
-  private Point robotPoint;
-  
-  public GetToTarget() {
+  public VisionCamera(SerialPort camera) {
+    visionCamera = camera;
+
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -33,37 +34,54 @@ public class GetToTarget extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    camera = new VisionCamera(RobotMap.jevois1);
-    pathPoints = new Waypoint[] {
-    new Waypoint(camera.getX(),camera.getY(),camera.getAngle()),
-    new Waypoint(0, 0, RobotMap.navx.getAngle())
-    };
-    pathToTarget = new PathSetup(pathPoints, complexPathVelocity, false);
-    controller = new PurePursuitController(pathToTarget, 1.2, 3.75);
-    robotPoint = new Point(0, 0,0);
+    shouldRun = true;
     cameraNotifier = new Notifier(new CameraRunnable());
     cameraNotifier.startPeriodic(0.5);
-    
   }
+
   private class CameraRunnable implements Runnable{
     public void run(){
-      if(isAtTarget){
-        robotPoint.setLocation(camera.getX(), camera.getY());
-        controller.setOdometry(robotPoint);
+      if(shouldRun){
+        cameraAlgorithm();
       }
       else{
         cameraNotifier.stop();
       }
+      
     }
   }
-  
-
-
+  private void cameraAlgorithm(){
+    if(visionCamera.getBytesReceived()>3){
+      cameraReadout = visionCamera.readString();
+      positionOfSpace = cameraReadout.indexOf(' ');
+      distString = cameraReadout.substring(0, positionOfSpace);
+      angleString = cameraReadout.substring(positionOfSpace);
+      angle = Pathfinder.d2r(Double.parseDouble(angleString));
+      distance = Double.parseDouble(distString);
+      x = Math.cos(angle)*distance;
+      y = Math.sin(angle)*distance;
+    }
+  }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+   
   }
-
+  public double getX(){
+    return x;
+  }
+  public double getY(){
+    return y;
+  }
+  public double getAngle(){
+    return angle;
+  }
+  public double getDistance(){
+    return distance;
+  }
+  public String getSerialString(){
+    return cameraReadout;
+  }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
@@ -73,6 +91,8 @@ public class GetToTarget extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    cameraNotifier.stop();
+    shouldRun = false;
   }
 
   // Called when another command which requires one or more of the same

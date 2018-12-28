@@ -1,7 +1,6 @@
 package frc.robot.autonomouscommands;
 
-import frc.robot.RobotMap;
-import frc.robot.tools.Point;
+
 
 public class AutoSuite {
     private ComplexPath complexPath;

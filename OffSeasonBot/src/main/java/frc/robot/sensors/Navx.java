@@ -6,7 +6,6 @@ import jaci.pathfinder.Pathfinder;
 
 
 public class Navx {
-	private double NavxAngle = 0;
 	private double originalAngle;
 	private double originalYaw;
 	private AHRS imu;

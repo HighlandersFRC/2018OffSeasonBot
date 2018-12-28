@@ -93,7 +93,6 @@ public class PurePursuitController extends Command {
     lastLookAheadPoint = new Point(0,0);
     closestSegment = 0;
     minDistanceToPoint = 100;
-    lookAheadDistance = 1.0;
     startingNumber = 0;
     startingNumberLA  = 0;
     lastPointIndex = 0;
@@ -166,7 +165,7 @@ public class PurePursuitController extends Command {
           if(partialPointIndex>lastPointIndex){
             lookAheadPoint.setLocation(startingPointOfLineSegment.getXPos() + lookAheadIndexT2*lineSegVector.getxVec() , startingPointOfLineSegment.getYPos() + lookAheadIndexT2*lineSegVector.getyVec());
             firstLookAheadFound = true;
-            
+
           }
         }
       }
@@ -214,7 +213,9 @@ public class PurePursuitController extends Command {
     else{
       leftDriveTrainVelocityPID.changeDesiredSpeed(leftVelocity);
       rightDriveTrainVelocityPID.changeDesiredSpeed(rightVelocity);
-    }  
+    }
+    SmartDashboard.putNumber("left", leftVelocity);
+    SmartDashboard.putNumber("right",rightVelocity);  
   }
   private void findRobotCurvature(){
     double a = -Math.tan(Pathfinder.d2r(odometry.gettheta()));

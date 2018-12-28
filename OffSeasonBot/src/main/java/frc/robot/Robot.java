@@ -21,6 +21,7 @@ import frc.robot.autonomouscommands.PathList;
 import frc.robot.autonomouscommands.PathSetup;
 import frc.robot.sensors.DriveEncoder;
 import frc.robot.sensors.Navx;
+import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 
 
@@ -37,7 +38,7 @@ public class Robot extends TimedRobot {
   private AutoSuite autoS = new AutoSuite();
   private RobotConfig config;
   Command m_autonomousCommand;
-  private Odometry odometry;
+  private VisionCamera jevois1;
   
 
   
@@ -128,8 +129,9 @@ public class Robot extends TimedRobot {
     autoS.End();
     teleopS.startTeleopCommands();
     config.teleopConfig();
-    odometry = new Odometry(false);
-    odometry.start();
+    jevois1 = new VisionCamera(RobotMap.jevois1);
+    jevois1.start();
+
   }
 
   /**
@@ -137,9 +139,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("y", odometry.getY());
-    SmartDashboard.putNumber("x",odometry.getX());
+   
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
+    SmartDashboard.putNumber("angle", jevois1.getAngle());
+    SmartDashboard.putNumber("dist", jevois1.getDistance());
+    SmartDashboard.putString("camreadout", jevois1.getSerialString());
     Scheduler.getInstance().run();
   }
 
