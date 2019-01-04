@@ -19,6 +19,11 @@ import frc.robot.autonomouscommands.AutoSuite;
 
 import frc.robot.teleopcommands.TeleopSuite;
 
+import org.json.simple.JSONObject;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import org.json.simple.parser.*;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -134,7 +139,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    System.out.println("You guys are jerks");
     //System.out.println(RobotMap.jevois1.readString());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     
