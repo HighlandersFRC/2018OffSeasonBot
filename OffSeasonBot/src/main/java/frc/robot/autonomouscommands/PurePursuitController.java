@@ -53,10 +53,16 @@ public class PurePursuitController extends Command {
   private double curveAdjustedVelocity;
   private double k;
   private boolean shouldRunAlgorithm;
-  public PurePursuitController(PathSetup path, double lookAhead, double kValue){
+  private double endError;
+  
+  public PurePursuitController(PathSetup path, double lookAhead, double kValue, double distoEndError){
     chosenPath = path;
     lookAheadDistance = lookAhead;  
     k = kValue;  
+    endError = distoEndError;
+    odometry = new Odometry(chosenPath.getReversed());
+    leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.0402026, 0.18, 0.0006, 0.80);
+    rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.0406258, 0.18, 0.0006, 0.80);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -64,9 +70,7 @@ public class PurePursuitController extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    odometry = new Odometry(chosenPath.getReversed());
-    leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.0402026, 0.18, 0.0006, 0.80);
-    rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.0406258, 0.18, 0.0006, 0.80);
+
     leftDriveTrainVelocityPID.start();
     rightDriveTrainVelocityPID.start();
     odometry.start();
@@ -195,6 +199,12 @@ public class PurePursuitController extends Command {
     odometry.setX(newPoint.getXPos());
     odometry.setY(newPoint.getYPos());
   }
+  public double getX(){
+    return odometry.getX();
+  }
+  public double getY(){
+    return odometry.getY();
+  }
   private void setWheelVelocities(double targetVelocity, double curvature){
     double leftVelocity;
     double rightVelocity;
@@ -235,7 +245,7 @@ public class PurePursuitController extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-   if(distToEndVector.length()<0.05){
+   if(distToEndVector.length()<endError){
      return true;
    }  
    else{

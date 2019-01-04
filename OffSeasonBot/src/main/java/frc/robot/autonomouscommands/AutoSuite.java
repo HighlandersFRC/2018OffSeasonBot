@@ -3,15 +3,15 @@ package frc.robot.autonomouscommands;
 
 
 public class AutoSuite {
-    private ComplexPath complexPath;
+    private GetToTarget getToTarget;
     public AutoSuite() {
-        complexPath =  new ComplexPath();
+        getToTarget = new GetToTarget();
     }
     public void startAutoCommands() {
-        complexPath.start();
+        getToTarget.start();
     }
     public void End(){
-       complexPath.cancel();
+        getToTarget.cancel();
     }
 
 }

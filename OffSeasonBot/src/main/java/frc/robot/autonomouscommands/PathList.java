@@ -14,19 +14,9 @@ public class PathList {
   //remember that for all paths if the first point is at (0,0,0) for some reason the end y value is revesred in the coordinate plane
   //for example for a path from (x,y,h) to (0,0,0) a path that goes from (0,0,0) to (x,y,h) would look the same but for one you would 
   // be decreasing y units on the coordinate plane, while in the other you would be increasing y units
-  public PathSetup complexPath1;
-  private Waypoint[] complexPath1points = new Waypoint[] {
-    new Waypoint(15.75,6.5,0),
-    new Waypoint(10.75,6.5,0),
-    new Waypoint(6.65,7.5,0),
-    new Waypoint(0, 0, 0)
-  };
-  private double complexPathVelocity = 6;
   public PathList() {
-      complexPath1 = new PathSetup(complexPath1points, complexPathVelocity, false);
   }
   public void resetAllPaths(){
-    complexPath1.resetPath();
   }
 }
  

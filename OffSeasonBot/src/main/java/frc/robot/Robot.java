@@ -10,18 +10,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
-import frc.robot.autonomouscommands.Odometry;
-import frc.robot.autonomouscommands.PathList;
-import frc.robot.autonomouscommands.PathSetup;
-import frc.robot.sensors.DriveEncoder;
-import frc.robot.sensors.Navx;
-import frc.robot.sensors.VisionCamera;
+
 import frc.robot.teleopcommands.TeleopSuite;
 
 
@@ -38,7 +33,6 @@ public class Robot extends TimedRobot {
   private AutoSuite autoS = new AutoSuite();
   private RobotConfig config;
   Command m_autonomousCommand;
-  private VisionCamera jevois1;
   
 
   
@@ -74,13 +68,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     autoS.End();
+   
     RobotMap.universalPathlist.resetAllPaths();
   }
 
   @Override
   public void disabledPeriodic() {
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
-    
     Scheduler.getInstance().run();
   }
 
@@ -129,8 +123,9 @@ public class Robot extends TimedRobot {
     autoS.End();
     teleopS.startTeleopCommands();
     config.teleopConfig();
-    jevois1 = new VisionCamera(RobotMap.jevois1);
-    jevois1.start();
+    //RobotMap.jevois1.setReadBufferSize(1);
+    //RobotMap.jevois1.setWriteBufferMode(WriteBufferMode.kFlushOnAccess);
+    //RobotMap.jevois1.setWriteBufferSize(1);
 
   }
 
@@ -139,11 +134,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-   
+    System.out.println(RobotMap.jevois1.readString());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
-    SmartDashboard.putNumber("angle", jevois1.getAngle());
-    SmartDashboard.putNumber("dist", jevois1.getDistance());
-    SmartDashboard.putString("camreadout", jevois1.getSerialString());
+    
     Scheduler.getInstance().run();
   }
 

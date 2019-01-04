@@ -10,6 +10,7 @@ package frc.robot.sensors;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 
 public class VisionCamera extends Command { 
@@ -24,9 +25,15 @@ public class VisionCamera extends Command {
   private String angleString;
   private boolean shouldRun;
   private Notifier cameraNotifier;
-  public VisionCamera(SerialPort camera) {
+  private String sanitizedReadout;
+  private double endDist;
+  private boolean dataGood;
+  private boolean firstDataFound;
+  public VisionCamera(SerialPort camera, double maxDist) {
     visionCamera = camera;
-
+    endDist = maxDist;
+    distString = new String();
+    sanitizedReadout = new String();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -35,8 +42,14 @@ public class VisionCamera extends Command {
   @Override
   protected void initialize() {
     shouldRun = true;
+    dataGood = true;
+    firstDataFound = false;
     cameraNotifier = new Notifier(new CameraRunnable());
-    cameraNotifier.startPeriodic(0.5);
+    cameraNotifier.startPeriodic(0.05);
+    visionCamera.reset();
+   
+    //this is necessary as setting it up in the init.cfg file wasn't working and maintaining an incorrect exposure
+    visionCamera.writeString("setcam absexp 32");
   }
 
   private class CameraRunnable implements Runnable{
@@ -51,27 +64,36 @@ public class VisionCamera extends Command {
     }
   }
   private void cameraAlgorithm(){
-    if(visionCamera.getBytesReceived()>3){
-      cameraReadout = visionCamera.readString();
-      positionOfSpace = cameraReadout.indexOf(' ');
-      distString = cameraReadout.substring(0, positionOfSpace);
-      angleString = cameraReadout.substring(positionOfSpace);
-      angle = Pathfinder.d2r(Double.parseDouble(angleString));
+    cameraReadout = visionCamera.readString();
+    System.out.println(cameraReadout);
+    if(cameraReadout.length()>0){
+      sanitizedReadout = cameraReadout.replaceAll("[^0-9. ]", "");
+      SmartDashboard.putString("camreadout", sanitizedReadout);
+    }
+    if(sanitizedReadout.contains(" ")){
+      distString = sanitizedReadout.substring(0, sanitizedReadout.indexOf(" "));
+    }
+    SmartDashboard.putString("distance", distString);
+    if(!distString.isEmpty()){
       distance = Double.parseDouble(distString);
-      x = Math.cos(angle)*distance;
-      y = Math.sin(angle)*distance;
+      firstDataFound = true;
+      if(distance<endDist){
+        dataGood = false;
+      }
+      SmartDashboard.putNumber("distnum", distance);
     }
   }
+  
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
    
   }
   public double getX(){
-    return x;
+    return distance;
   }
   public double getY(){
-    return y;
+    return 0;
   }
   public double getAngle(){
     return angle;
@@ -85,14 +107,19 @@ public class VisionCamera extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(!dataGood){
+      return true;
+    }
     return false;
   }
-
+  public boolean hasGoodData(){
+    return dataGood;
+  }
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    cameraNotifier.stop();
     shouldRun = false;
+    cameraNotifier.stop();
   }
 
   // Called when another command which requires one or more of the same
