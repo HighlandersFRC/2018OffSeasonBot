@@ -34,13 +34,13 @@ public class GetToTarget extends Command {
 
   @Override
   protected void initialize() {
-    camera = new VisionCamera(RobotMap.jevois1,5.5);
+  /*  camera = new VisionCamera(RobotMap.jevois1,5.5);
     camera.start();
     isTargetFound = false;
     isAtTarget = false;
     cameraNotifier = new Notifier(new CameraRunnable());
     targetNotifier = new Notifier(new FindTargetRunnable());
-    targetNotifier.startPeriodic(0.05);
+    targetNotifier.startPeriodic(0.05);*/
   }
   private class CameraRunnable implements Runnable{
     public void run(){

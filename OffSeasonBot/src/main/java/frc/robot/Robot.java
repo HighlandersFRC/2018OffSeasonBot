@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    System.out.println(RobotMap.jevois1.readString());
+    //System.out.println(RobotMap.jevois1.readString());
     SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     
     Scheduler.getInstance().run();

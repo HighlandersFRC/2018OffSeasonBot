@@ -61,7 +61,7 @@ public class RobotMap {
 		public static DriveEncoder rightMainDrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
 		public static Navx mainNavx = new Navx(navx);	
 		
-		public static SerialPort jevois1 = new SerialPort(115200, SerialPort.Port.kUSB1);
+	//	public static SerialPort jevois1 = new SerialPort(115200, SerialPort.Port.kUSB1);
 
 		//Array of drive motors to simplify configuration
 		public static TalonSRX driveMotors[] = {
