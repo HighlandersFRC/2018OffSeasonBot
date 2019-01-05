@@ -7,33 +7,32 @@
 
 package frc.robot.sensors;
 
+import java.text.ParseException;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
 
 public class VisionCamera extends Command { 
   private SerialPort visionCamera;
+  private boolean shouldRun;
+  private String cameraReadout;
+  private Notifier cameraNotifier;
+  private Object obj;
+  private JSONObject input;
+  private double distance;
+  private double angle;
   private double x;
   private double y;
-  private volatile double angle;
-  private volatile double distance;
-  private String cameraReadout;
-  private int positionOfSpace;
-  private String distString;
-  private String angleString;
-  private boolean shouldRun;
-  private Notifier cameraNotifier;
-  private String sanitizedReadout;
-  private double endDist;
-  private boolean dataGood;
-  private boolean firstDataFound;
-  public VisionCamera(SerialPort camera, double maxDist) {
+  public VisionCamera(SerialPort camera) {
     visionCamera = camera;
-    endDist = maxDist;
-    distString = new String();
-    sanitizedReadout = new String();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -41,15 +40,8 @@ public class VisionCamera extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    shouldRun = true;
-    dataGood = true;
-    firstDataFound = false;
     cameraNotifier = new Notifier(new CameraRunnable());
-    cameraNotifier.startPeriodic(0.05);
-    visionCamera.reset();
-   
-    //this is necessary as setting it up in the init.cfg file wasn't working and maintaining an incorrect exposure
-    visionCamera.writeString("setcam absexp 32");
+    cameraNotifier.startPeriodic(0.5);
   }
 
   private class CameraRunnable implements Runnable{
@@ -64,24 +56,21 @@ public class VisionCamera extends Command {
     }
   }
   private void cameraAlgorithm(){
+    obj = null;
     cameraReadout = visionCamera.readString();
-    System.out.println(cameraReadout);
-    if(cameraReadout.length()>0){
-      sanitizedReadout = cameraReadout.replaceAll("[^0-9. ]", "");
-      SmartDashboard.putString("camreadout", sanitizedReadout);
+    try{
+      obj = new JSONParser().parse(cameraReadout);
+      input = (JSONObject) obj;
+      distance = (double) input.get("Distance");
+      angle = (double) input.get("Angle");
+      x = distance*Math.cos(angle);
+      y = distance*Math.sin(angle);
     }
-    if(sanitizedReadout.contains(" ")){
-      distString = sanitizedReadout.substring(0, sanitizedReadout.indexOf(" "));
+    catch (org.json.simple.parser.ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-    SmartDashboard.putString("distance", distString);
-    if(!distString.isEmpty()){
-      distance = Double.parseDouble(distString);
-      firstDataFound = true;
-      if(distance<endDist){
-        dataGood = false;
-      }
-      SmartDashboard.putNumber("distnum", distance);
-    }
+    
   }
   
   // Called repeatedly when this Command is scheduled to run
@@ -90,10 +79,10 @@ public class VisionCamera extends Command {
    
   }
   public double getX(){
-    return distance;
+    return x;
   }
   public double getY(){
-    return 0;
+    return y;
   }
   public double getAngle(){
     return angle;
@@ -102,18 +91,15 @@ public class VisionCamera extends Command {
     return distance;
   }
   public String getSerialString(){
-    return cameraReadout;
+    return "youhavenofriends";
   }
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(!dataGood){
-      return true;
-    }
     return false;
   }
   public boolean hasGoodData(){
-    return dataGood;
+    return false;
   }
   // Called once after isFinished returns true
   @Override
