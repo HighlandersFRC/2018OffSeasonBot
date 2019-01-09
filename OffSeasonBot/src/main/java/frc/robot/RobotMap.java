@@ -51,7 +51,7 @@ public class RobotMap {
         public static TalonSRX leftDriveFollowerTwo = new TalonSRX(leftDriveFollowerTwoID);
     		
 		public static AHRS navx = new AHRS(I2C.Port.kMXP);
-    
+		public static DoubleSolenoid prototype = new DoubleSolenoid(2, 3);
 		//Initialize all pneumatic Actuators, predefine actuation directions
 		public static DoubleSolenoid shifters = new DoubleSolenoid(0,1);
 		public static DoubleSolenoid.Value lowGear = DoubleSolenoid.Value.kReverse;

@@ -7,24 +7,17 @@
 
 package frc.robot;
 
-
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
-
+import frc.robot.sensors.VisionCamera;
+import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.teleopcommands.TeleopSuite;
-
-import org.json.simple.JSONObject;
-import java.io.PrintWriter;
-import java.io.FileReader;
-import org.json.simple.parser.*;
-
-
+import frc.robot.universalcommands.StopAllMotors;
+//import org.json.simple.parser.JSONParser;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -33,14 +26,15 @@ import org.json.simple.parser.*;
  * project.
  */
 public class Robot extends TimedRobot {
+  public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
-  private TeleopSuite teleopS = new TeleopSuite();
-  private AutoSuite autoS = new AutoSuite();
-  private RobotConfig config;
+  private TeleopSuite teleopSuite = new TeleopSuite();
+  private AutoSuite autoSuite  = new AutoSuite();
+  private RobotConfig robotConfig = new RobotConfig();
+  private StopAllMotors stopAllMotors = new StopAllMotors();
+  //private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
   Command m_autonomousCommand;
-  
-
-  
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -49,8 +43,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_oi = new OI();
-    config = new RobotConfig();
-    SmartDashboard.putNumber("dt", RobotMap.ft-RobotMap.it);
+    // chooser.addOption("My Auto", new MyAutoCommand());
+    SmartDashboard.putData("Auto mode", m_chooser);
   }
 
   /**
@@ -72,14 +66,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    autoS.End();
-   
-    RobotMap.universalPathlist.resetAllPaths();
+      teleopSuite.endTeleopCommands();
+      autoSuite.endTeleopCommands();
+      stopAllMotors.start();
   }
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
 
@@ -96,10 +89,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    
-    autoS.startAutoCommands();
-    config.autoConfig();
-   
+    m_autonomousCommand = m_chooser.getSelected();
+    autoSuite.endTeleopCommands();
+    /*
+     * String autoSelected = SmartDashboard.getString("Auto Selector",
+     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+     * = new MyAutoCommand(); break; case "Default Auto": default:
+     * autonomousCommand = new ExampleCommand(); break; }
+     */
+
+    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }
@@ -110,14 +109,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
     Scheduler.getInstance().run();
   }
 
   @Override
   public void teleopInit() {
-   
-    
+    teleopSuite.startTeleopCommands();
+  //  visionCamera.start();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -125,13 +123,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    autoS.End();
-    teleopS.startTeleopCommands();
-    config.teleopConfig();
-    //RobotMap.jevois1.setReadBufferSize(1);
-    //RobotMap.jevois1.setWriteBufferMode(WriteBufferMode.kFlushOnAccess);
-    //RobotMap.jevois1.setWriteBufferSize(1);
-
   }
 
   /**
@@ -139,10 +130,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    //System.out.println(RobotMap.jevois1.readString());
-    SmartDashboard.putBoolean("navxconnection",RobotMap.mainNavx.isOn());
-    System.out.println("Hello World");
-    //hello
+    System.out.println(RobotMap.navx.getAngle());
     Scheduler.getInstance().run();
   }
 

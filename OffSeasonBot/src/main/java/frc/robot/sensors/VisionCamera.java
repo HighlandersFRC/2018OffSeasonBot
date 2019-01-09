@@ -9,16 +9,17 @@ package frc.robot.sensors;
 
 import java.text.ParseException;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+//import org.json.simple.JSONObject;
+
+//import org.json.simple.JSONObject;
+//import org.json.simple.parser.JSONParser;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
+//import org.json.simple.parser.*;
 
 public class VisionCamera extends Command { 
   private SerialPort visionCamera;
@@ -26,22 +27,27 @@ public class VisionCamera extends Command {
   private String cameraReadout;
   private Notifier cameraNotifier;
   private Object obj;
-  private JSONObject input;
+ // private JSONObject input;
   private double distance;
   private double angle;
   private double x;
   private double y;
+  private String sanitizedReadout;
   public VisionCamera(SerialPort camera) {
     visionCamera = camera;
-    // Use requires() here to declare subsystem dependencies
+    
+    // Use requires() here t
+    // declare subsystem dependencies
     // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    shouldRun = true;
     cameraNotifier = new Notifier(new CameraRunnable());
-    cameraNotifier.startPeriodic(0.5);
+    cameraNotifier.startPeriodic(0.05);
+    visionCamera.setReadBufferSize(1);
   }
 
   private class CameraRunnable implements Runnable{
@@ -57,19 +63,30 @@ public class VisionCamera extends Command {
   }
   private void cameraAlgorithm(){
     obj = null;
-    cameraReadout = visionCamera.readString();
-    try{
-      obj = new JSONParser().parse(cameraReadout);
+   cameraReadout = visionCamera.readString();
+   if(!cameraReadout.isEmpty()){
+     sanitizedReadout = cameraReadout;
+   }
+
+   // System.out.println(visionCamera.readString());
+
+   /* try{
+      obj = new JSONParser().parse("{ \"Distance\" : 120.0, \"Angle\" : 12.0}");
       input = (JSONObject) obj;
-      distance = (double) input.get("Distance");
-      angle = (double) input.get("Angle");
+      distance = (double) input.get("'Distance'");
+      angle = (double) input.get("'Angle'");
       x = distance*Math.cos(angle);
       y = distance*Math.sin(angle);
+      SmartDashboard.putNumber("x", x);
+      SmartDashboard.putNumber("y", y);
+      SmartDashboard.putNumber("dist",distance);
+      SmartDashboard.putNumber("ANGLE", angle);
     }
     catch (org.json.simple.parser.ParseException e) {
       // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+     // e.printStackTrace();
+      //System.out.println(sanitizedReadout);
+    }*/
     
   }
   

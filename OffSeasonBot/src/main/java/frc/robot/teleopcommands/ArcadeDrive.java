@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArcadeDrive extends Command {
-  private double deadZone = 0.1;
+  private double deadZone = 0.05;
   private double turn =0;
   private double throttel = 0;
   private double ratio = 0;
-  private double sensitivity = 0.75;
+  private double sensitivity = 1.25;
   private double leftPower;
   private double rightPower;
   private double throttleJoystickValue;
@@ -115,6 +115,9 @@ public class ArcadeDrive extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+      RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
+      RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
+  
   }
 
   // Called when another command which requires one or more of the same

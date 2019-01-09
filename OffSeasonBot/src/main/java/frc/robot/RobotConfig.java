@@ -34,7 +34,7 @@ public class RobotConfig {
 	public static double maxVelocity = 11.9;//this is not for teleop this is adjusted for voltage compensation
 	public static double maxAcceleration = 9;
 
-	public static int timeOut = 4;//Milliseconds
+	public static int timeOut = 0;//Milliseconds
 	public RobotConfig() {
 		setStartingConfig();
 	}

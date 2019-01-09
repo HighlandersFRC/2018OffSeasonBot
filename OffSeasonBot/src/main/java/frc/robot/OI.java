@@ -22,7 +22,8 @@ public class OI {
 
   public static Joystick joyStickOne = new Joystick(0);
   public static JoystickButton shiftDown = new JoystickButton(joyStickOne,5);
-	public static JoystickButton shiftUp = new JoystickButton(joyStickOne,6);
+  public static JoystickButton shiftUp = new JoystickButton(joyStickOne,6);
+  public static JoystickButton prototype = new JoystickButton(joyStickOne, 1);
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.

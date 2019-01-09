@@ -12,5 +12,8 @@ public class TeleopSuite {
 		//driveControl.start();
 		arcadeDrive.start();
 	}
+	public void endTeleopCommands()	{
+		
+	}
 
 }

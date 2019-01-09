@@ -10,7 +10,7 @@ public class AutoSuite {
     public void startAutoCommands() {
         getToTarget.start();
     }
-    public void End(){
+    public void endTeleopCommands(){
         getToTarget.cancel();
     }
 
