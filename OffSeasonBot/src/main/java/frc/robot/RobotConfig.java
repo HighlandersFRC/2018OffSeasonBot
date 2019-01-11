@@ -15,6 +15,9 @@ public class RobotConfig {
 	public static double wheelCircum = Math.PI * wheelDiam;
 	public static double robotBaseDist = 1.84;//effective not measured, in ft
 	
+	public static double minimumstictionOverComeVoltageF = 0.09;
+	public static double minimumstictionOverComeVoltageB = -0.082;
+
 	public static double openLoopRampRate = 0.0;
 	
 	public static double voltageControlMax = 11.0;

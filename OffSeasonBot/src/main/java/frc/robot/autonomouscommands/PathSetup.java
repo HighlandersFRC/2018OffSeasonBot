@@ -15,6 +15,7 @@ public class PathSetup {
     private Trajectory mainPath;
     private Waypoint[] points;
     private boolean pathGenerated = false;
+    private double timeStep;
     public PathSetup(Waypoint[] pathpoints, double pathspeed, boolean reverse){
         points = pathpoints;
         velocity = pathspeed;

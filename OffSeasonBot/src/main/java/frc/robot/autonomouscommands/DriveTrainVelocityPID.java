@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotConfig;
 import frc.robot.sensors.DriveEncoder;
 
 public class DriveTrainVelocityPID extends Command {
@@ -48,6 +49,8 @@ public class DriveTrainVelocityPID extends Command {
     talon.config_kD(profile, d, 0);
     talon.set(ControlMode.Velocity, driveEncoder.convertftpersToNativeUnitsper100ms(speed));
     finish = false;
+    //talon.configNominalOutputForward(RobotConfig.minimumstictionOverComeVoltageF);
+    //talon.configNominalOutputReverse(RobotConfig.minimumstictionOverComeVoltageB);
   }
   public void changeDesiredSpeed(double feetPerSecond){
     speed = feetPerSecond;
@@ -77,6 +80,8 @@ public class DriveTrainVelocityPID extends Command {
   protected void end() {
     talon.set(ControlMode.Velocity, 0);
     talon.set(ControlMode.PercentOutput, 0);
+    talon.configNominalOutputForward(0);
+    talon.configNominalOutputReverse(0);
   }
 
   // Called when another command which requires one or more of the same

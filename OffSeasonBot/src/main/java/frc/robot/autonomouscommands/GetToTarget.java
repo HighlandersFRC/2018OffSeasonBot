@@ -16,7 +16,7 @@ import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
 public class GetToTarget extends Command {
-  private double complexPathVelocity = 1;
+  private double complexPathVelocity = 5;
   private Waypoint[] pathPoints;
   private PathSetup pathToTarget;
   private PurePursuitController controller;
@@ -25,6 +25,9 @@ public class GetToTarget extends Command {
   private Notifier targetNotifier;
   private boolean isAtTarget;
   private Point robotPoint;
+  private double startingAngle;
+  private double acceptableError;
+
   private boolean isTargetFound = false;
   
   public GetToTarget() {
@@ -34,27 +37,33 @@ public class GetToTarget extends Command {
 
   @Override
   protected void initialize() {
-  /*  camera = new VisionCamera(RobotMap.jevois1,5.5);
-    camera.start();
+   // camera = new VisionCamera(RobotMap.jevois1,5.5);
+   // camera.start();
+    //if(camera.getDistance() <1){
+      //acceptableError = 0.02
+    //}
+    acceptableError = 0.02;
     isTargetFound = false;
     isAtTarget = false;
     cameraNotifier = new Notifier(new CameraRunnable());
     targetNotifier = new Notifier(new FindTargetRunnable());
-    targetNotifier.startPeriodic(0.05);*/
+    startingAngle = RobotMap.navx.getAngle();
+    targetNotifier.startPeriodic(0.05);
   }
   private class CameraRunnable implements Runnable{
     public void run(){
       targetNotifier.stop();
+      if(controller.isFinished()){
+        isAtTarget = true;
+      }
       if(!isAtTarget){
-        if(camera.hasGoodData()){
-          System.out.println("goodData");
-          System.out.println(camera.getDistance());
-          robotPoint.setLocation(camera.getDistance(), controller.getY());
+        //if(camera.hasGoodData()){
+          robotPoint.setLocation(controller.getX(), controller.getY());
           controller.setOdometry(robotPoint);
-        }
-        else{
+        //}
+        /*else{
           System.out.println("badData");
-        }
+        }*/
       }
       else{
         cameraNotifier.stop();
@@ -63,14 +72,14 @@ public class GetToTarget extends Command {
   }
   private class FindTargetRunnable implements Runnable{
     public void run(){
-      if(camera.getDistance()>0&&!isTargetFound){
+      if(3>0&&!isTargetFound){
         pathPoints = new Waypoint[] {
-          new Waypoint(camera.getDistance()-6.0,camera.getY(),0),
+          new Waypoint(7,7,0),
           new Waypoint(0, 0,0)
         };
         pathToTarget = new PathSetup(pathPoints, complexPathVelocity, false);
         robotPoint = new Point(0,0,0);
-        controller = new PurePursuitController(pathToTarget, 1.2, 3.75,0.1);
+        controller = new PurePursuitController(pathToTarget, 1.2, 3.75,0.02);
         controller.start();
         isTargetFound = true;
       }
@@ -86,14 +95,12 @@ public class GetToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+   // System.out.println(RobotMap.navx.getAngle()-startingAngle);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-  if(isTargetFound){
-    
-  }
 
     return false;
   }
@@ -102,6 +109,7 @@ public class GetToTarget extends Command {
   @Override
   protected void end() {
     isAtTarget = true;
+    System.out.println(RobotMap.navx.getAngle());
     cameraNotifier.stop();
   }
 
