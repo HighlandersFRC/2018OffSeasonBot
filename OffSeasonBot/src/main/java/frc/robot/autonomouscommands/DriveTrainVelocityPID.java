@@ -80,8 +80,7 @@ public class DriveTrainVelocityPID extends Command {
   protected void end() {
     talon.set(ControlMode.Velocity, 0);
     talon.set(ControlMode.PercentOutput, 0);
-    talon.configNominalOutputForward(0);
-    talon.configNominalOutputReverse(0);
+   
   }
 
   // Called when another command which requires one or more of the same

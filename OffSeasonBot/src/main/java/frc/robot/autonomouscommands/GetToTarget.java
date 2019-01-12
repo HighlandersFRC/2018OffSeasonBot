@@ -16,7 +16,7 @@ import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
 public class GetToTarget extends Command {
-  private double complexPathVelocity = 5;
+  private double complexPathVelocity = 2;
   private Waypoint[] pathPoints;
   private PathSetup pathToTarget;
   private PurePursuitController controller;
@@ -74,12 +74,12 @@ public class GetToTarget extends Command {
     public void run(){
       if(3>0&&!isTargetFound){
         pathPoints = new Waypoint[] {
-          new Waypoint(7,7,0),
+          new Waypoint(8.0,5.75,0),
           new Waypoint(0, 0,0)
         };
         pathToTarget = new PathSetup(pathPoints, complexPathVelocity, false);
         robotPoint = new Point(0,0,0);
-        controller = new PurePursuitController(pathToTarget, 1.2, 3.75,0.02);
+        controller = new PurePursuitController(pathToTarget, 0.35, 3.75,0.002);
         controller.start();
         isTargetFound = true;
       }

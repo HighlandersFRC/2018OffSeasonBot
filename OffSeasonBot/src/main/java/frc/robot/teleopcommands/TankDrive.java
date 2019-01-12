@@ -10,6 +10,7 @@ package frc.robot.teleopcommands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.RobotConfig;
@@ -31,24 +32,24 @@ public class TankDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Math.abs(OI.joyStickOne.getRawAxis(1))>deadZone){
-      RobotMap.leftDriveLead.set(ControlMode.PercentOutput, OI.joyStickOne.getRawAxis(1));
+    if(Math.abs(OI.controller1.getRawAxis(1))>deadZone){
+      RobotMap.leftDriveLead.set(ControlMode.PercentOutput, OI.controller1.getRawAxis(1));
     }
     else {
       RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);		
     }
-    if(Math.abs(OI.joyStickOne.getRawAxis(5))>deadZone){
-      RobotMap.rightDriveLead.set(ControlMode.PercentOutput, OI.joyStickOne.getRawAxis(5));
+    if(Math.abs(OI.controller1.getRawAxis(5))>deadZone){
+      RobotMap.rightDriveLead.set(ControlMode.PercentOutput, OI.controller1.getRawAxis(5));
     }
     else {
       RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
     }	
-  if(OI.shiftUp.get()) {
-    RobotMap.drive.setHighGear();
-  }
-  else if(OI.shiftDown.get()) {
-    RobotMap.drive.setLowGear();
-  }
+    if(OI.controller1.getBumper(Hand.kRight)) {
+      RobotMap.drive.setHighGear();
+    }
+    else if(OI.controller1.getBumper(Hand.kLeft)) {
+      RobotMap.drive.setLowGear();
+    }
   if(RobotMap.shifters.get() == RobotMap.highGear) {
     for(TalonSRX talon:RobotMap.driveMotors) {
       talon.configContinuousCurrentLimit(RobotConfig.driveMotorContinuousCurrentHighGear, RobotConfig.timeOut);

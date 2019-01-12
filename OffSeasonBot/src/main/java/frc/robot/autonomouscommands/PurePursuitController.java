@@ -187,8 +187,9 @@ public class PurePursuitController extends Command {
     distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
     distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
     SmartDashboard.putNumber("distoend", distToEndVector.length());
-    SmartDashboard.putNumber("x", odometry.getX());
-    SmartDashboard.putNumber("y",odometry.getY());
+    SmartDashboard.putNumber("x", odometry.getX()*12);
+    SmartDashboard.putNumber("y",odometry.getY()*12);
+    SmartDashboard.putNumber("theta", odometry.gettheta());
     startingNumberLA = (int)partialPointIndex;
     lastLookAheadPoint = lookAheadPoint;
     findRobotCurvature();

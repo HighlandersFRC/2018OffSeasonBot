@@ -16,16 +16,11 @@ import edu.wpi.first.wpilibj.XboxController;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  public static XboxController controller1 = new XboxController(1);
+  public static XboxController controller1 = new XboxController(0);
 
 
 
-  public static Joystick joyStickOne = new Joystick(0);
-  public static JoystickButton shiftDown = new JoystickButton(joyStickOne,5);
-  public static JoystickButton shiftUp = new JoystickButton(joyStickOne,6);
-  public static JoystickButton prototype = new JoystickButton(joyStickOne, 1);
-  //// CREATING BUTTONS
-  // One type of button is a joystick button which is any button on a
+ 
   //// joystick.
   // You create one by telling it which joystick it's on and which button
   // number it is.

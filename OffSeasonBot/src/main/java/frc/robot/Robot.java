@@ -7,13 +7,13 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.AutoSuite;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.universalcommands.StopAllMotors;
 //import org.json.simple.parser.JSONParser;
@@ -25,8 +25,7 @@ import frc.robot.universalcommands.StopAllMotors;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
-  public static OI m_oi;
+
   private TeleopSuite teleopSuite = new TeleopSuite();
   private AutoSuite autoSuite  = new AutoSuite();
   private RobotConfig robotConfig = new RobotConfig();
@@ -41,7 +40,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_oi = new OI();
     robotConfig.setStartingConfig();
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -68,7 +66,6 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
       teleopSuite.endTeleopCommands();
       autoSuite.endTeleopCommands();
-      
       stopAllMotors.start();
   }
 
@@ -133,7 +130,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-   
+
+
     Scheduler.getInstance().run();
   }
 

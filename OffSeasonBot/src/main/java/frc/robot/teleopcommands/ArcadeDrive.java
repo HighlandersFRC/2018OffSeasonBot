@@ -15,6 +15,7 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ArcadeDrive extends Command {
@@ -42,9 +43,9 @@ public class ArcadeDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    throttleJoystickValue = OI.joyStickOne.getRawAxis(1);
-    turnJoystickValue = OI.joyStickOne.getRawAxis(4);
-    triggerBrakeValue = OI.joyStickOne.getRawAxis(3);
+    throttleJoystickValue = OI.controller1.getRawAxis(1);
+    turnJoystickValue = OI.controller1.getRawAxis(4);
+    triggerBrakeValue = OI.controller1.getRawAxis(3);
     throttel = throttleJoystickValue;  
     ratio = Math.abs(throttel);
     if(Math.abs(turnJoystickValue)>deadZone) {	
@@ -79,10 +80,10 @@ public class ArcadeDrive extends Command {
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, rightPower);
     
    
-    if(OI.shiftUp.get()) {
+    if(OI.controller1.getBumper(Hand.kRight)) {
       RobotMap.drive.setHighGear();
     }
-    else if(OI.shiftDown.get()) {
+    else if(OI.controller1.getBumper(Hand.kLeft)) {
       RobotMap.drive.setLowGear();
     }
   	if(RobotMap.shifters.get() == RobotMap.highGear) {

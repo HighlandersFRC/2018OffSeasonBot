@@ -1,5 +1,6 @@
 package frc.robot.autonomouscommands;
 
+import java.awt.geom.Arc2D;
 import java.nio.file.Path;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
