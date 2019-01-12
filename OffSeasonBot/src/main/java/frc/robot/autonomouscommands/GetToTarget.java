@@ -58,8 +58,12 @@ public class GetToTarget extends Command {
       }
       if(!isAtTarget){
         //if(camera.hasGoodData()){
-          robotPoint.setLocation(controller.getX(), controller.getY());
-          controller.setOdometry(robotPoint);
+          robotPoint.setLocation(controller.getX(), controller.getY(),controller.getTheta());
+          controller.setOdometryTheta(robotPoint.getTheta());
+          controller.setOdometryX(robotPoint.getYPos());
+          controller.setOdometryY(robotPoint.getXPos());
+          System.out.println(controller.getX()+"x");
+          System.out.println(controller.getY()+"y");
         //}
         /*else{
           System.out.println("badData");
@@ -74,18 +78,18 @@ public class GetToTarget extends Command {
     public void run(){
       if(3>0&&!isTargetFound){
         pathPoints = new Waypoint[] {
-          new Waypoint(8.0,5.75,0),
+          new Waypoint(2.5,2.35,0),
           new Waypoint(0, 0,0)
         };
         pathToTarget = new PathSetup(pathPoints, complexPathVelocity, false);
         robotPoint = new Point(0,0,0);
-        controller = new PurePursuitController(pathToTarget, 0.35, 3.75,0.002);
+        controller = new PurePursuitController(pathToTarget, 0.35, 3.75,0.07);
         controller.start();
         isTargetFound = true;
       }
       if(isTargetFound){
         targetNotifier.stop();
-        cameraNotifier.startPeriodic(2);
+        cameraNotifier.startPeriodic(1);
       }
     }
   }
@@ -101,7 +105,9 @@ public class GetToTarget extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-
+    if(isAtTarget){
+      return true;
+    }
     return false;
   }
 
@@ -109,7 +115,8 @@ public class GetToTarget extends Command {
   @Override
   protected void end() {
     isAtTarget = true;
-    System.out.println(RobotMap.navx.getAngle());
+    System.out.println(RobotMap.navx.getAngle()-startingAngle);
+    
     cameraNotifier.stop();
   }
 

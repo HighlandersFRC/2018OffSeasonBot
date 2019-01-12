@@ -1,17 +1,16 @@
 package frc.robot.autonomouscommands;
 
-
+import frc.robot.RobotMap;
 
 public class AutoSuite {
-    private GetToTarget getToTarget;
+    private PurePursuitController fPursuitController = new PurePursuitController(RobotMap.universalPathlist.newPathSetup, 1.4, 2.75, 0.05);
     public AutoSuite() {
-        getToTarget = new GetToTarget();
     }
     public void startAutoCommands() {
-        getToTarget.start();
+        fPursuitController.start();
     }
     public void endTeleopCommands(){
-        getToTarget.cancel();
+        fPursuitController.cancel();
     }
 
 }

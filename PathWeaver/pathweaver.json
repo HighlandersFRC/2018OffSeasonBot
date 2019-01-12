@@ -1,0 +1,10 @@
+{
+  "lengthUnit": "Foot",
+  "timeStep": 0.05,
+  "maxVelocity": 6.0,
+  "maxAcceleration": 9.0,
+  "maxJerk": 75.0,
+  "wheelBase": 1.85,
+  "gameName": "Destination: Deep Space",
+  "outputDir": "../../../../Desktop/DevPaths/OffSeasonDevPath/output"
+}

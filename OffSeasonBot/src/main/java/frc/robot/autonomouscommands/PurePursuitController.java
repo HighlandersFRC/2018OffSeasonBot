@@ -78,7 +78,7 @@ public class PurePursuitController extends Command {
     odometry.setX(chosenPath.getMainPath().get(0).x);
     odometry.setY(chosenPath.getMainPath().get(0).y);
     odometry.setTheta(chosenPath.getMainPath().get(0).heading);
-    if(chosenPath.getMainPath().get(0).x!=0){
+    if(chosenPath.getMainPath().get(0).x >= chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x){
       if(chosenPath.getReversed()){
         odometry.setReversed(false);
       }
@@ -187,8 +187,8 @@ public class PurePursuitController extends Command {
     distToEndVector.setX(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x-odometry.getX());
     distToEndVector.setY(chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).y-odometry.getY());
     SmartDashboard.putNumber("distoend", distToEndVector.length());
-    SmartDashboard.putNumber("x", odometry.getX()*12);
-    SmartDashboard.putNumber("y",odometry.getY()*12);
+    SmartDashboard.putNumber("x", odometry.getX());
+    SmartDashboard.putNumber("y",odometry.getY());
     SmartDashboard.putNumber("theta", odometry.gettheta());
     startingNumberLA = (int)partialPointIndex;
     lastLookAheadPoint = lookAheadPoint;
@@ -196,15 +196,26 @@ public class PurePursuitController extends Command {
     curveAdjustedVelocity = Math.min(Math.abs(k/desiredRobotCurvature),chosenPath.getMainPath().get(closestSegment).velocity);
     setWheelVelocities(curveAdjustedVelocity, desiredRobotCurvature);
   } 
-  public void setOdometry(Point newPoint){
-    odometry.setX(newPoint.getXPos());
-    odometry.setY(newPoint.getYPos());
+  public void setOdometryX(double X){
+    double desiredX= X;
+    odometry.setX(desiredX);
+  }
+  public void setOdometryY(double Y){
+    double desiredY= Y;
+    odometry.setX(desiredY);
+  }
+  public void setOdometryTheta(double Theta){
+    double desiredTheta= Theta;
+    odometry.setX(desiredTheta);
   }
   public double getX(){
     return odometry.getX();
   }
   public double getY(){
     return odometry.getY();
+  }
+  public double getTheta(){
+    return odometry.gettheta();
   }
   private void setWheelVelocities(double targetVelocity, double curvature){
     double leftVelocity;
@@ -261,6 +272,8 @@ public class PurePursuitController extends Command {
     pathNotifier.stop();
     shouldRunAlgorithm = false;
     odometry.endOdmetry();
+    leftDriveTrainVelocityPID.changeDesiredSpeed(0);
+    rightDriveTrainVelocityPID.changeDesiredSpeed(0);
     rightDriveTrainVelocityPID.endPID();
     leftDriveTrainVelocityPID.endPID();
     leftDriveTrainVelocityPID.cancel();

@@ -1,4 +1,9 @@
 package frc.robot.autonomouscommands;
+
+import java.io.File;
+import java.util.ArrayList;
+
+
 import frc.robot.RobotConfig;
 
 import jaci.pathfinder.Pathfinder;
@@ -14,22 +19,26 @@ public class PathSetup {
     private boolean isReversed;
     private Trajectory mainPath;
     private Waypoint[] points;
-    private boolean pathGenerated = false;
-    private double timeStep;
+    private ArrayList<Double> velocitiesArrayList;
     public PathSetup(Waypoint[] pathpoints, double pathspeed, boolean reverse){
         points = pathpoints;
         velocity = pathspeed;
-        pathGenerated = false;
         mainPath = generateMainPath();
         rightFollower = generateRightPathFollower();
-        leftFollower = generateLeftPathFollower();   
+        leftFollower = generateLeftPathFollower();
+        velocitiesArrayList.clear();      
+        isReversed = reverse;
+    }
+    public PathSetup(File file, boolean reverse){
+        mainPath = Pathfinder.readFromCSV(file);
+        rightFollower = generateRightPathFollower();
+        leftFollower = generateLeftPathFollower();
         isReversed = reverse;
     }
     public Trajectory generateMainPath() {
-        // all units are in feet, cause MURICA!, basically the path calculations are assuming 1/20th of a second between updates, and a max velcoity of v ft/sec, a max acceleration of a ft/sec^2, and a max jerk of 75 feet/sec^3
+        // all units are in feet, cause MURICA!, basically the path calculations are assuming 1/20th of a second between updates, and a max velcoity of v ft/sec, a max acceleration of a ft/sec, and a max jerk of 75 feet/sec^3
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05,velocity,RobotConfig.maxAcceleration, 75.0);
         Trajectory trajectory = Pathfinder.generate(points, config);
-        pathGenerated = true;
         return trajectory;
     }
     public DistanceFollower generateLeftPathFollower(){
@@ -48,7 +57,6 @@ public class PathSetup {
         TankModifier modifier = new TankModifier(mainPath).modify(RobotConfig.robotBaseDist);
         Trajectory right= modifier.getRightTrajectory();
         DistanceFollower rightfollower = new DistanceFollower(right);
-        pathGenerated = true;
         //this is a way to print out what pathfinder expects the robot to do and how that is supposed to happen
         return rightfollower;
     }
@@ -83,8 +91,8 @@ public class PathSetup {
     public Trajectory getMainPath(){
         return mainPath;
     }
-    public boolean isPathGenerated(){
-        return pathGenerated;
+    public void generateCurvature(){
+
     }
        
 }
