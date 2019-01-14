@@ -99,7 +99,7 @@ public class PathRunner extends Command {
     rightEncoder.softReset();
     kt = (path.getVelocity()/RobotConfig.maxVelocity)*0.05;
     //this is to have a seperate navx for just the path and make sure that that is zereod
-    pathNavx.softResetYaw(RobotMap.navx.getYaw());
+    pathNavx.softResetYaw();
     //below is where the runnable seen above is implemented and setup
     pathNotifier = new Notifier(new PathRunnable());
     pathNotifier.startPeriodic(0.05);
@@ -136,7 +136,7 @@ public class PathRunner extends Command {
   protected void end() {
     RobotMap.leftDriveLead.set(ControlMode.PercentOutput, 0);
     RobotMap.rightDriveLead.set(ControlMode.PercentOutput, 0);
-    pathNavx.softResetYaw(RobotMap.navx.getYaw());
+    pathNavx.softResetYaw();
     pathNotifier.stop();
     odometry.zero();
     odometry.cancel();

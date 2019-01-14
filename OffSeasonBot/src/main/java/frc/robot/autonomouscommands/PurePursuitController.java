@@ -60,9 +60,7 @@ public class PurePursuitController extends Command {
     lookAheadDistance = lookAhead;  
     k = kValue;  
     endError = distoEndError;
-    odometry = new Odometry(chosenPath.getReversed());
-    leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.0402026, 0.18, 0.0006, 0.80);
-    rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.0406258, 0.18, 0.0006, 0.80);
+  
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -70,14 +68,16 @@ public class PurePursuitController extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
+    odometry = new Odometry(chosenPath.getReversed());
+    leftDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.leftDriveLead, 1, 0.0402026, 0.18, 0.0006, 0.80);
+    rightDriveTrainVelocityPID = new DriveTrainVelocityPID(0, RobotMap.rightDriveLead, 1, 0.0406258, 0.18, 0.0006, 0.80);
     leftDriveTrainVelocityPID.start();
     rightDriveTrainVelocityPID.start();
     odometry.start();
     odometry.zero();
     odometry.setX(chosenPath.getMainPath().get(0).x);
     odometry.setY(chosenPath.getMainPath().get(0).y);
-    odometry.setTheta(chosenPath.getMainPath().get(0).heading);
+    odometry.setTheta(0);
     if(chosenPath.getMainPath().get(0).x >= chosenPath.getMainPath().get(chosenPath.getMainPath().length()-1).x){
       if(chosenPath.getReversed()){
         odometry.setReversed(false);

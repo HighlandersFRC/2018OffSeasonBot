@@ -16,8 +16,8 @@ import frc.robot.sensors.Navx;
 import jaci.pathfinder.Pathfinder;
 
 public class Odometry extends Command {
-  private double theta;
-  private double thetaNext;
+  private double theta= 0;
+  private double thetaNext= 0;
   private Navx navx;
   private double leftSideNext;
   private double leftSide;
@@ -37,10 +37,11 @@ public class Odometry extends Command {
   private boolean isReversed;
   private boolean finish;
   public Odometry(boolean reversed) {
+   
+    isReversed = reversed;
     leftDriveEncoder = new DriveEncoder(RobotMap.leftDriveLead, RobotMap.leftDriveLead.getSelectedSensorPosition(0));
     rightDriveEncoder = new DriveEncoder(RobotMap.rightDriveLead, RobotMap.rightDriveLead.getSelectedSensorPosition(0));
     navx = new Navx(RobotMap.navx);
-    isReversed = reversed;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -87,8 +88,9 @@ public class Odometry extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    navx.softResetAngle(navx.currentAngle());
-    navx.softResetYaw(navx.currentYaw());
+   
+    navx.softResetAngle();
+    navx.softResetYaw();
     leftDriveEncoder.softReset();
     rightDriveEncoder.softReset();
     odometryrunner = new Notifier(new OdometryRunnable());
@@ -104,7 +106,8 @@ public class Odometry extends Command {
     x =0;
     y = 0;
     theta = 0;
-    navx.softResetYaw(navx.currentYaw());
+    navx.softResetYaw();
+    navx.softResetAngle();
     leftDriveEncoder.softReset();
     rightDriveEncoder.softReset();
     leftSide = 0;

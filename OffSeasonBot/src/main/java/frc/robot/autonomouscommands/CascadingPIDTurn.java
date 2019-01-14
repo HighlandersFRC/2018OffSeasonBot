@@ -48,7 +48,7 @@ public class CascadingPIDTurn extends Command {
     turnPID.setSetPoint(desiredAngle);
     leftDriveTrainVelocityPID.start();
     rightDriveTrainVelocityPID.start();
-    navx.softResetYaw(RobotMap.navx.getYaw());
+    navx.softResetYaw();
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -39,7 +39,7 @@ public class CascadingDriveStraightPID extends Command {
     stayStraightPID.setSetPoint(0);
     leftVelocityPID.start();
     rightVelocityPID.start();
-    straightNavx.softResetYaw(RobotMap.navx.getYaw());
+    straightNavx.softResetYaw();
     startTime = Timer.getFPGATimestamp();
   }
 

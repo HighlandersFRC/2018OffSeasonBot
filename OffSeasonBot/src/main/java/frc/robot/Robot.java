@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomouscommands.AutoSelector;
 import frc.robot.autonomouscommands.AutoSuite;
+import frc.robot.sensors.VisionCamera;
 import frc.robot.teleopcommands.TeleopSuite;
 import frc.robot.universalcommands.StopAllMotors;
 //import org.json.simple.parser.JSONParser;
@@ -31,6 +33,7 @@ public class Robot extends TimedRobot {
   private AutoSuite autoSuite  = new AutoSuite();
   private RobotConfig robotConfig = new RobotConfig();
   private StopAllMotors stopAllMotors = new StopAllMotors();
+ // private VisionCamera visionCamera = new VisionCamera(RobotMap.jevois1);
   Command m_autonomousCommand;
     
   
@@ -57,6 +60,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putBoolean("NavxConnection", RobotMap.navx.isConnected());
   }
 
   /**
@@ -110,6 +114,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+
     Scheduler.getInstance().run();
   }
 
@@ -132,7 +137,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-
+    
     Scheduler.getInstance().run();
   }
 

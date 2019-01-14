@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomouscommands.PathList;
 import frc.robot.sensors.DriveEncoder;
@@ -61,7 +62,7 @@ public class RobotMap {
 		public static DriveEncoder rightMainDrive = new DriveEncoder(rightDriveLead,RobotMap.rightDriveLead.getSelectedSensorPosition(0));		
 		public static Navx mainNavx = new Navx(navx);	
 		
-		//public static SerialPort jevois1 = new SerialPort(115200, SerialPort.Port.kUSB);
+		//public static SerialPort jevois1 = new SerialPort(115200, Port.kUSB1);
 
 		//Array of drive motors to simplify configuration
 		public static TalonSRX driveMotors[] = {

@@ -33,6 +33,11 @@ public class VisionCamera extends Command {
   private double x;
   private double y;
   private String sanitizedReadout;
+  private int spacePosition;
+  private String distance1;
+  private String angle1;
+  private String distance2;
+  private String angle2;
   public VisionCamera(SerialPort camera) {
     visionCamera = camera;
     
@@ -46,13 +51,14 @@ public class VisionCamera extends Command {
   protected void initialize() {
     shouldRun = true;
     cameraNotifier = new Notifier(new CameraRunnable());
-    cameraNotifier.startPeriodic(0.05);
+    cameraNotifier.startPeriodic(0.1);
     visionCamera.setReadBufferSize(1);
   }
 
   private class CameraRunnable implements Runnable{
     public void run(){
       if(shouldRun){
+        visionCamera.flush();
         cameraAlgorithm();
       }
       else{
@@ -62,32 +68,25 @@ public class VisionCamera extends Command {
     }
   }
   private void cameraAlgorithm(){
-    obj = null;
+
    cameraReadout = visionCamera.readString();
-   if(!cameraReadout.isEmpty()){
-     sanitizedReadout = cameraReadout;
+   if(cameraReadout.length()>2){
+    distance1 = cameraReadout.substring(0, cameraReadout.indexOf(" "));
+    cameraReadout = cameraReadout.substring(cameraReadout.indexOf(" ")+1);
+    angle1 = cameraReadout.substring(0, cameraReadout.indexOf(" "));
+    cameraReadout = cameraReadout.substring(cameraReadout.indexOf(" ")+1);
+    distance2 = cameraReadout.substring(0, cameraReadout.indexOf(" "));
+    cameraReadout = cameraReadout.substring(cameraReadout.indexOf(" ")+1);
+    angle2 = cameraReadout.substring(0, cameraReadout.indexOf(" "));
+    cameraReadout = cameraReadout.substring(cameraReadout.indexOf(" ")+1);
+
    }
 
-   // System.out.println(visionCamera.readString());
+    SmartDashboard.putString("distance1", distance1);    
+    SmartDashboard.putString("distance2", distance2);    
+    SmartDashboard.putString("angle1", angle1);    
+    SmartDashboard.putString("angle2", angle2);    
 
-   /* try{
-      obj = new JSONParser().parse("{ \"Distance\" : 120.0, \"Angle\" : 12.0}");
-      input = (JSONObject) obj;
-      distance = (double) input.get("'Distance'");
-      angle = (double) input.get("'Angle'");
-      x = distance*Math.cos(angle);
-      y = distance*Math.sin(angle);
-      SmartDashboard.putNumber("x", x);
-      SmartDashboard.putNumber("y", y);
-      SmartDashboard.putNumber("dist",distance);
-      SmartDashboard.putNumber("ANGLE", angle);
-    }
-    catch (org.json.simple.parser.ParseException e) {
-      // TODO Auto-generated catch block
-     // e.printStackTrace();
-      //System.out.println(sanitizedReadout);
-    }*/
-    
   }
   
   // Called repeatedly when this Command is scheduled to run
